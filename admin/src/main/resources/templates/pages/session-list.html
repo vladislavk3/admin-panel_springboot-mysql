@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="card shadow"> 
+			<div class="card-header border-0">
+				<th:block th:replace="fragments/data-page-options :: list-header"></th:block>
+				
+				<form role="form" th:action="${baseURL} + '/search'" method="get">
+					<div class="row form-search-container">
+						<div class="col-lg-4 col-md-6 col-sm-12 xs-filter-group">
+							<select id="category-filter" class="form-control selectpicker show-tick" multiple 
+								data-actions-box="true" data-live-search="true" 
+								th:data-select-all-text="#{data.display.button.select.all}"
+								th:data-deselect-all-text="#{data.display.button.deselect.all}"
+								th:title="#{|${baseMessageKey}.option.filter.category.title|}"
+								th:data-none-selected-text="#{|${baseMessageKey}.option.filter.category.title|}"
+								data-selected-text-format="count > 2" 
+								th:data-count-selected-text="#{|${baseMessageKey}.option.filter.category.many|}">
+								<option th:each="sessionCategory: ${sessionCategories}" 
+									th:value="${sessionCategory.id}" 
+									th:text="${sessionCategory.name}"
+									th:selected="${#arrays.contains(filteredCategoryIds, sessionCategory.id)}"></option>
+							</select>
+						</div>
+						<div class="col-lg-4 col-md-6 col-sm-12 xs-filter-group">
+							<select id="voice-filter" class="form-control voice-selectpicker show-tick" multiple
+								data-actions-box="false" data-live-search="true" 
+								th:data-select-all-text="#{data.display.button.select.all}"
+								th:data-deselect-all-text="#{data.display.button.deselect.all}"
+								th:title="#{|${baseMessageKey}.option.filter.voice.title|}"
+								th:data-none-selected-text="#{|${baseMessageKey}.option.filter.voice.title|}"
+								data-selected-text-format="count > 2" 
+								th:data-count-selected-text="#{|${baseMessageKey}.option.filter.voice.many|}">
+								<option th:each="filteredVoice: ${filteredVoices}" 
+									th:value="${filteredVoice.id}" 
+									th:text="${filteredVoice.name}"
+									th:selected="${#arrays.contains(filteredVoiceIds, filteredVoice.id)}"></option>
+							</select>
+						</div>
+						
+						<div class="offset-lg-1 col-lg-3 col-md-12 col-sm-12 text-right">
+							<select id="display-page-option" class="form-control selectpicker show-tick" 
+								th:data-none-selected-text="#{data.display.page.option.title}">
+								<option th:each="pageSize: ${supportPageSizes}" 
+									th:value="${pageSize}" 
+									th:text="#{data.display.page.option.item(${pageSize}, ${pageSizeName})}"
+									th:selected="${size != null && size == pageSize}"></option>
+								<option value="-1" th:text="#{data.display.page.option.all(${pageSizeName})}"
+									th:selected="${size == null || size <= 0}"></option>
+							</select>
+						</div>
+					</div>
+					
+					<input type="hidden" name="action" value="update-filter">
+					<input type="submit" style="display: none" />
+				</form>
+			</div>
+			
+			<div class="table-responsive">
+				<table class="table align-items-center table-flush" th:id="${pageName + '-data-table'}">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col" width="32%" th:text="#{|${baseMessageKey}.detail.title|}"></th>
+							<th scope="col" width="25%" class="no-sort" th:text="#{|${baseMessageKey}.detail.categories|}"></th>
+							<th scope="col" width="25%" th:text="#{|${baseMessageKey}.detail.voice.id|}"></th>
+							<th scope="col" width="5%" style="min-width: 60px;" th:text="#{|${baseMessageKey}.detail.duration|}"></th>
+							<th scope="col" width="3%" style="min-width: 30px;" th:text="#{|${baseMessageKey}.detail.free|}"></th>
+							<th scope="col" width="5%" style="min-width: 110px;" th:text="#{data.detail.created}"></th>
+							<th scope="col" width="5%" style="min-width: 80px;" class="no-sort" th:if="${readPermission}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item : ${result.items}">
+							<th scope="row" nowrap style="padding-top: 0px; padding-bottom: 0px;">
+								<div class="media align-items-center">
+									<a th:if="${item.image != null && item.image != ''}" 
+										th:href="${baseMediaURL + '/image/view/' + item.image}" 
+										class="avatar rounded-circle mr-3" target="_blank">
+										<img th:alt="${item.title}" th:src="${baseMediaURL + '/image/view/' + item.image}">
+									</a>
+									<a th:if="${item.image == null || item.image == ''}" 
+										href="javascript:;" class="avatar rounded-circle mr-3">
+										<img th:alt="${item.title}" th:src="@{/images/default/{pageName}.png(pageName=${pageName})}">
+									</a>
+									<div class="media-body">
+										<span class="mb-0 text-sm" th:utext="${item.title}"></span>
+									</div>
+								</div>
+							</th>
+							<td nowrap style="padding-left: 0px;">
+								<ul>
+									<li th:each="category : ${item.categories}" th:utext="${category.name}"></li>
+								</ul>
+							</td>
+							<td nowrap>
+								<span th:utext="${item.voiceName}"></span>
+							</td>
+							<td nowrap class="text-center">
+								<span th:utext="${item.duration}"></span>
+							</td>
+							<td nowrap class="text-center" th:switch="${item.free}">
+								<i th:case="true" class="fas fa-check"></i>
+								<i th:case="false" class="fas fa-times"></i>
+							</td>
+							<td nowrap>
+								<span th:text="${#dates.format(item.createdTime, dateTimeFormat)}"></span>
+							</td>
+							<td class="action-column text-right" th:if="${writePermission}">
+								<a class="btn btn-icon btn-2 btn-primary" th:href="${baseURL + '/edit/' + item.id}" th:title="#{action.edit.title}">
+									<span class="btn-inner--icon">
+										<i class="fas fa-edit"></i>
+									</span>
+								</a>
+								
+								<button class="btn btn-icon btn-2 btn-danger" type="button" 
+									th:title="#{action.delete.title}" th:onclick="confirmDelete([[${item.id}]])">
+									<span class="btn-inner--icon">
+										<i class="fas fa-times"></i>
+									</span>
+								</button>
+							</td>
+							<td class="action-column text-right" th:if="${!writePermission && readPermission}">
+								<a class="btn btn-icon btn-2 btn-info" th:href="${baseURL + '/view/' + item.id}" th:title="#{action.view.title}">
+									<span class="btn-inner--icon">
+										<i class="fas fa-eye"></i>
+									</span>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="card-footer py-4" th:insert="fragments/data-list-pagination :: pagination"></div>
+		</div>
+		
+		<th:block th:replace="fragments/data-list-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			const sortableColumnMaps = { 'title': 0, 'voice': 2, 'duration': 3, 'free': 4, 'created': 5 };
+			
+			function confirmDelete(id) {
+				const deleteUrl = '[[${baseURL}]]/delete/' + id;
+				
+				$('#confirm-delete-form').attr('action', deleteUrl);
+				showModal('confirm-delete-modal');
+			}
+			
+			function initializeVoiceSelectPicker() {
+				var voiceSelectpickerOptions = {
+					ajax: {
+						url: '[[${rootURL}]]/common/search',
+						type: 'GET',
+						dataType: 'json',
+						data: function() {
+							return {
+								dataType: 'professional',
+								q: '{{{q}}}'
+							};
+						}
+					},
+					locale: {
+						searchPlaceholder: '[[#{|${baseMessageKey}.option.filter.voice.title|}]]',
+						statusSearching: '[[#{searching.placeholder}]]',
+						statusInitialized: '[[#{|${baseMessageKey}.option.filter.voice.search.initialized|}]]',
+						currentlySelected: '[[#{|${baseMessageKey}.option.filter.voice.search.currently.selected|}]]',
+						emptyTitle: '[[#{|${baseMessageKey}.option.filter.voice.search.empty.title|}]]',
+						errorText: '[[#{|${baseMessageKey}.option.filter.voice.search.error.text|}]]',
+						statusNoResults: '[[#{|${baseMessageKey}.option.filter.voice.search.status.no.results|}]]'
+						
+					},
+					preprocessData: function(data) {
+						let result = [];
+						
+						const dtos = data.items || [];
+						
+						for (i = 0; i < dtos.length; i++) {
+							result.push($.extend(true, dtos[i], {
+								text : dtos[i].name,
+								value: dtos[i].id
+							}));
+						}
+						
+						return result;
+					}
+				};
+				
+				$('.voice-selectpicker')
+					.selectpicker()
+					.ajaxSelectPicker(voiceSelectpickerOptions);
+				
+				$('.voice-selectpicker').trigger('change');
+			}
+			
+			$(function() {
+				const dataTableId = '[[${pageName}]]-data-table'; 
+				const defaultSort = '[[${sort}]]';
+				const sortUrl = '[[${baseURL}]]/current-page?sort=';
+				
+				buildDataTable(dataTableId, sortableColumnMaps, defaultSort, sortUrl);
+				
+				$('.selectpicker').selectpicker();
+				initializeVoiceSelectPicker();
+				
+				$('#category-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedCategoryIds = $('#category-filter').val();
+					
+					window.location = '[[${baseURL}]]/search?action=update-filter&filterCategoryIds=' + encodeURIComponent(selectedCategoryIds.join(','));
+				});
+				
+				$('#voice-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedVoiceIds = $('#voice-filter').val();
+					
+					window.location = '[[${baseURL}]]/search?action=update-filter&filterVoiceIds=' + encodeURIComponent(selectedVoiceIds.join(','));
+				});
+				
+				$('#display-page-option').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedPageSize = $('#display-page-option').val();
+					
+					window.location = '[[${baseURL}]]/search?action=update-filter&page=1&size=' + selectedPageSize;
+				});
+				
+				showOnLoadedModal();
+			});
+		</script>
+	</th:block>
+</body>
+</html>

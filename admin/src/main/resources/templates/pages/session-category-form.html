@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="stylesheets">
+		<style type="text/css">
+			#[[${pageName + '-data-form'}]] .image-preview {
+				max-height: 250px;
+			}
+		</style>
+	</th:block>
+	
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+			</div>
+			
+			<div class="card-body border-0">
+				<form action="#" th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+					th:id="${pageName + '-data-form'}"
+					th:object="${dto}" method="post" enctype="multipart/form-data">
+					<fieldset th:disabled="${!writePermission}">
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Invalid username and password.</div>
+						</div>
+		
+						<div th:if="${param.logout}">
+							<div class="alert alert-info">You have been logged out.</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-lg-8 col-md-12 col-sm-12">
+								<div class="form-group row">
+									<label for="name" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+										<span class="required-field" th:text="#{|${baseMessageKey}.detail.name|}"></span>
+									</label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<input type="text" class="form-control" 
+											th:field="*{name}" id="name"
+											th:placeholder="#{|${baseMessageKey}.detail.name.placeholder|}" 
+											required="required" autofocus="autofocus" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+									</div>
+								</div>
+								
+								<th:block th:switch="${action}">
+									<div th:case="create" class="form-group row">
+										<label for="uploadImageFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+											<span class="required-field" th:text="#{|${baseMessageKey}.detail.image|}"></span>
+										</label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadImageFile}" id="uploadImageFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.image.placeholder|}" required="required"
+													th:accept="${supportImageTypes}" onChange="selectImage(this)" 
+													th:default-src="@{/images/default/{pageName}.png(pageName=${pageName})}" />
+												<label class="custom-file-label" for="uploadImageFile" id="imageFileLabel" 
+													th:data-browse="#{action.select.image}" 
+													th:data-browse-short-label="#{action.select.image.short.label}"
+													th:text="#{|${baseMessageKey}.detail.image.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+										</div>
+									</div>
+									<div th:case="*" class="form-group row">
+										<label for="uploadImageFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+											<span th:text="#{|${baseMessageKey}.detail.image|}"></span>
+										</label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadImageFile}" id="uploadImageFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.image.placeholder|}" 
+													th:accept="${supportImageTypes}" onChange="selectImage(this)" 
+													th:default-src="${baseMediaURL + '/image/view/' + dto.image}" />
+												<label class="custom-file-label" for="uploadImageFile" id="imageFileLabel" 
+													th:data-browse="#{action.select.image}" 
+													th:data-browse-short-label="#{action.select.image.short.label}"
+													th:text="#{|${baseMessageKey}.detail.image.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+										</div>
+									</div>
+								</th:block>
+								
+								<div th:if="${action != 'create'}" class="form-group row">
+									<label for="name" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+										<span th:text="#{|${baseMessageKey}.detail.session.count|}"></span>
+									</label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<input type="text" class="form-control" readonly="readonly" 
+											th:field="*{sessionCount}" id="sessionCount" />
+									</div>
+								</div>
+								
+								<th:block th:replace="fragments/data-page-options :: form-action"></th:block>
+							</div>
+							
+							<div class="col-lg-4 col-md-12 col-sm-12 text-center" th:switch="${action}">
+								<img th:case="create" id="imagePreview" class="image-fit image-preview" 
+									src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+								<a th:case="*" th:href="${baseMediaURL + '/image/download/' + dto.image}" 
+									th:title="#{session.category.detail.image.link.title}" target="_blank">
+									<img id="imagePreview" class="image-fit image-preview" 
+										th:alt="${dto.name}" th:src="${baseMediaURL + '/image/view/' + dto.image}">
+								</a>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			function selectImage(inputElement) {
+				var supportImageTypes = '[[${supportImageTypes}]]';
+				var supportImageFileSize = [[${supportImageSize}]];
+				var defaultImageLabel = '[[#{|${baseMessageKey}.detail.image.placeholder|}]]';
+				
+				validateAndPreviewImage(inputElement, 
+						'imagePreview', 'imageFileLabel', defaultImageLabel,
+						supportImageTypes, supportImageFileSize, 
+						'image-file-type-modal', 'image-file-size-modal');
+			}
+			
+			$(function() {
+				$('select').selectpicker();
+				
+		    	showOnLoadedModal();
+		    });
+		</script>
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+</head>
+<body>
+	<th:block th:fragment="list-header">
+		<div class="row">
+			<th:block th:switch="${writePermission}">
+				<th:block th:case="true">
+					<div class="col-lg-6 col-md-5 col-sm-12 sm-form-group">
+						<a class="btn btn-icon btn-2 btn-primary" th:href="${baseURL + '/create'}">
+							<span class="btn-inner--icon">
+								<i class="fas fa-edit"></i> <span th:text="#{action.create}"></span>
+							</span>
+						</a>
+					</div>
+					
+					<!-- 
+					<div class="col-lg-6 md-text-right d-md-none d-lg-block">
+						<h3 class="mb-0 form-title-label" th:utext="${formTitle}"></h3>
+					</div>
+					-->
+					<div class="col-lg-6 col-md-7 col-sm-12 text-right">
+						<form th:if="${baseURL != null && baseURL != ''}" 
+							role="form" th:action="${baseURL} + '/search'" method="get">
+							<input type="hidden" name="action" value="update-filter">
+							<input type="submit" style="display: none" />
+							
+							<div class="form-group mb-0">
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text">
+											<i class="fas fa-search"></i>
+										</span>
+									</div>
+									<input class="form-control" type="text" name="q" 
+										th:placeholder="#{search.placeholder}" th:value="${search}" />
+								</div>
+							</div>
+						</form>
+					</div>
+				</th:block>
+				
+				<div th:case="*" class="col-12 text-right">
+					<!-- 
+					<h3 class="mb-0 form-title-label" th:utext="${formTitle}"></h3>
+					-->
+					<form th:if="${baseURL != null && baseURL != ''}" 
+						role="form" th:action="${baseURL} + '/search'" method="get">
+						<input type="hidden" name="action" value="update-filter">
+						<input type="submit" style="display: none" />
+						
+						<div class="form-group mb-0">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="fas fa-search"></i>
+									</span>
+								</div>
+								<input class="form-control" type="text" name="q" 
+									th:placeholder="#{search.placeholder}" th:value="${search}" />
+							</div>
+						</div>
+					</form>
+				</div>
+			</th:block>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="list-filter">
+		<div class="row form-search-container">
+			<div class="offset-lg-8 col-lg-4 offset-md-6 col-md-6 col-sm-12 text-right">
+				<select id="display-page-option" class="form-control selectpicker show-tick" 
+					th:data-none-selected-text="#{data.display.page.option.title}">
+					<option th:each="pageSize: ${supportPageSizes}" 
+						th:value="${pageSize}" 
+						th:text="#{data.display.page.option.item(${pageSize}, ${pageSizeName})}"
+						th:selected="${size != null && size == pageSize}"></option>
+					<option value="-1" th:text="#{data.display.page.option.all(${pageSizeName})}"
+						th:selected="${size == null || size <= 0}"></option>
+				</select>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="list-filter-2">
+		<div class="row form-search-container">
+			<div class="offset-xl-8 col-xl-4 offset-lg-7 col-lg-5 offset-md-5 col-md-7 col-sm-12 text-right">
+				<select id="display-page-option" class="form-control selectpicker show-tick" 
+					th:data-none-selected-text="#{data.display.page.option.title}">
+					<option th:each="pageSize: ${supportPageSizes}" 
+						th:value="${pageSize}" 
+						th:text="#{data.display.page.option.item(${pageSize}, ${pageSizeName})}"
+						th:selected="${size != null && size == pageSize}"></option>
+					<option value="-1" th:text="#{data.display.page.option.all(${pageSizeName})}"
+						th:selected="${size == null || size <= 0}"></option>
+				</select>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="form-header">
+		<div class="row">
+			<div class="col-lg-6 col-md-6 col-sm-6">
+				<a class="btn btn-icon btn-2 btn-primary" th:href="${baseURL + '/current-page'}"
+					th:title="#{action.go.to.list.title}">
+					<span class="btn-inner--icon">
+						<i class="fas fa-arrow-left"></i> <span th:text="#{action.go.to.list}"></span>
+					</span>
+				</a>
+			</div>
+			
+			<div class="col-sm-6 sm-text-right d-none d-sm-block">
+				<h3 class="mb-0 form-title-label" th:utext="${formTitle}"></h3>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="form-action">
+		<div th:if="${writePermission}" class="form-group row">
+			<div class="offset-lg-3 col-lg-9 offset-md-0 col-md-12 offset-smd-0 col-smd-12 offset-sm-3 col-sm-9 col-xs-12">
+				<div class="form-action-buttons-row">
+					<button type="submit" class="btn btn-primary sm-btn-block smd-btn-block btn-above" th:title="#{action.save.title}">
+						<i class="fas fa-save"></i> <span class="hidden-xs" th:text="#{action.save}"></span>
+					</button>
+					
+					<a class="btn btn-outline-warning sm-btn-block smd-btn-block" th:href="${baseURL + '/current-page'}"
+						th:title="#{action.go.to.list.title}">
+						<span class="btn-inner--icon">
+							<i class="fas fa-arrow-left"></i> <span th:text="#{action.go.to.list}"></span>
+						</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="form-action-lg-2">
+		<div th:if="${writePermission}" class="form-group row">
+			<div class="offset-lg-2 col-lg-10 offset-md-3 col-md-9 offset-smd-0 col-smd-12 offset-sm-3 col-sm-9 col-xs-12">
+				<div class="form-action-buttons-row">
+					<button type="submit" class="btn btn-primary sm-btn-block smd-btn-block btn-above" th:title="#{action.save.title}">
+						<i class="fas fa-save"></i> <span class="hidden-xs" th:text="#{action.save}"></span>
+					</button>
+					
+					<a class="btn btn-outline-warning sm-btn-block smd-btn-block" th:href="${baseURL + '/current-page'}"
+						th:title="#{action.go.to.list.title}">
+						<span class="btn-inner--icon">
+							<i class="fas fa-arrow-left"></i> <span th:text="#{action.go.to.list}"></span>
+						</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="form-action-no-offset">
+		<div class="row" th:if="${writePermission}">
+								<div class="col">
+									<div class="form-group row">
+										<div class="col-xl-3 col-lg-4 col-md-6  col-12"> 
+											<button type="submit" class="form-control btn btn-primary  "
+												th:title="#{action.save.title}">
+												<i class="fas fa-save"></i> <span class="hidden-xs"
+													th:text="#{action.save}"></span>
+											</button>
+										</div>
+										
+										<div class="col-xl-3 col-lg-5 col-md-6   col-12 custom-sm-mg-top custom-xs-mg-top"> 
+											<a class="form-control btn btn-outline-warning"
+												th:href="${baseURL + '/current-page'}"
+												th:title="#{action.go.to.list.title}"> <span
+												class="btn-inner--icon" > <i class="fas fa-arrow-left"></i>
+													<span th:text="#{action.go.to.list}"></span>
+											</span>
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+	</th:block>
+	
+	
+</body>
+</html>

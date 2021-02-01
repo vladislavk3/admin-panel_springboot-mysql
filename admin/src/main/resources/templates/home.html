@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/main-layout.html}">
+<head>
+    <title th:text="#{greeting}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:text="#{greeting}"></h3>
+    
+    	<!-- <h1 th:inline="text">[[${#httpServletRequest.remoteUser}]]</h1>
+    	<h1 th:text="${#httpServletRequest.remoteUser}"></h1>
+    	<div th:text="${#locale}"></div>
+    	
+    	
+        <h1>Be Your Self Application</h1>
+        <h2>Visit <a th:href="@{/user/management}">User management</a></h2>
+        <h2>Visit <a th:href="@{/about}">Normal page</a></h2>
+        <h2>API <a th:href="@{/api/test}">Test API</a></h2>
+        
+        <h2>5. <span th:utext="#{lang.change}"></span>: <a th:href="@{/home?lang=en}" th:text="#{lang.eng}"></a></h2>
+        <h2>6. <span th:utext="#{lang.change}"></span>: <a th:href="@{/home?lang=fr}" th:text="#{lang.fr}"></a></h2> -->
+    </th:block>
+
+    <th:block layout:fragment="scripts">
+    	
+    </th:block>
+</body>
+</html>

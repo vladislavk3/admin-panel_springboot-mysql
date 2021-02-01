@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+<style>
+/* For mobile phones: */
+/* [class*="custom-col-"] {
+  width: 100%;
+} */
+
+@media only screen and (max-width: 649px) {
+  /* For tablets: */
+  .custom-col-sm-1 {width: 8.33%;}
+  .custom-col-sm-2 {width: 16.66%;}
+  .custom-col-sm-3 {width: 25%;}
+  .custom-col-sm-4 {width: 33.33%;}
+  .custom-col-sm-5 {width: 41.66%;}
+  .custom-col-sm-6 {width: 50%;}
+  .custom-col-sm-7 {width: 58.33%;}
+  .custom-col-sm-8 {width: 66.66%;}
+  .custom-col-sm-9 {width: 75%;}
+  .custom-col-sm-10 {width: 83.33%;}
+  .custom-col-sm-11 {width: 91.66%;}
+  .custom-col-sm-12 {width: 100%;margin-top: 3px}
+}
+
+@media only screen  and (min-width: 650px) and (max-width: 1259px) {
+  .custom-col-md-1 {width: 8.33%;}
+  .custom-col-md-2 {width: 16.66%;}
+  .custom-col-md-3 {width: 25%;}
+  .custom-col-md-4 {width: 33.33%; margin-top: 3px}
+  .custom-col-md-5 {width: 41.66%;}
+  .custom-col-md-6 {width: 50%;}
+  .custom-col-md-7 {width: 58.33%;}
+  .custom-col-md-8 {width: 66.66%;}
+  .custom-col-md-9 {width: 75%;}
+  .custom-col-md-10 {width: 83.33%;}
+  .custom-col-md-11 {width: 91.66%;}
+  .custom-col-md-12 {width: 100%;margin-top: 5px}
+  .custom-col-md-32 {width: 32%;}
+}
+
+@media only screen and (min-width: 1260px) {
+  /* For desktop: */
+  .custom-col-lg-1 {width: 8.33%;}
+  .custom-col-lg-2 {width: 16.66%;}
+  .custom-col-lg-3 {width: 25%;}
+  .custom-col-lg-4 {width: 33.33%;}
+  .custom-col-lg-5 {width: 41.66%;}
+  .custom-col-lg-6 {width: 50%;}
+  .custom-col-lg-7 {width: 58.33%;}
+  .custom-col-lg-8 {width: 66.66%;}
+  .custom-col-lg-9 {width: 75%;}
+  .custom-col-lg-10 {width: 83.33%;}
+  .custom-col-lg-11 {width: 91.66%;}
+  .custom-col-lg-12 {width: 100%;}
+}
+</style>
+</head>
+
+<body>
+	<th:block layout:fragment="content">
+			<div class="card  shadow">
+				<!-- Card header -->
+				<div class="card-header border-0">
+					<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+
+				</div>
+				<!-- Card body -->
+				<div class="card-body px-lg-5">
+					<form
+						th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+						th:object="${dto}" method="post">
+						<fieldset th:disabled="${!writePermission}">
+							<input type="hidden" th:field="*{id}" />
+							<div>
+								<div class="custom-col-lg-4 custom-col-md-12 custom-col-sm-12 mb-5" id="reset_pwd_email_div" style="float:right;"
+									th:if="${writePermission && #strings.contains(action, 'update')}">
+									<div class="card shadow border-0">
+										<div class="card-body">
+											<a th:href="@{/users/{id}/resetpassword(id=${dto.id})}"
+												class="btn btn-primary mt-4 col" th:text="#{users.action.reset.password}">Reset Password</a> 
+											<a style="margin-bottom: 15px"
+												th:href="@{/users/{id}/resendverifemail(id=${dto.id})}"
+												class="btn btn-primary mt-4 col" th:text="#{users.action.resend.verification.email}">Resend Verification Email</a>
+										</div>
+									</div>
+								</div>
+								<div class="custom-col-lg-8 custom-col-md-12 custom-col-sm-12" style="float:left;">
+									<!-- Title -->
+									<div class="form-group row">
+										<label for="title"
+											class="label form-control-label  custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.title|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<select id="title" class="form-control" th:field="*{title}"
+												required>
+												<option th:each="title : ${titles}" th:value="${title}"
+														th:text="${title}"></option>
+											</select>
+										</div>
+									</div>
+									<!-- Last Name -->
+									<div class="form-group row">
+										<label for="lastname"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.lastname|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<input class="form-control" id="lastname" type="text"
+												th:field="*{lastName}" required>
+										</div>
+									</div>
+									<!-- First Name -->
+									<div class="form-group row">
+										<label for="firstname"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.firstname|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<input class="form-control" type="text" id="firstname"
+												th:field="*{firstName}" required>
+										</div>
+									</div>
+									<!-- Email -->
+									<div class="form-group row">
+										<label for="email"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.email|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<input class="form-control" type="email" id="email"
+												th:field="*{email}" required>
+										</div>
+									</div>
+									<!-- Login type -->
+									<div class="form-group row">
+										<label for="loginType"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.logintype|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<select id="loginType" class="form-control"
+												th:field="*{loginType}" required>				
+												<option th:each="loginType : ${loginTypes}"
+													th:value="${loginType}"
+													th:text="#{'user.logintype.' + ${loginType}}">
+												</option>
+											</select>
+										</div>
+									</div>
+									<!-- Password -->
+									<div class="form-group row" id="password_div">
+										<input type="hidden" /> <label for="pwd"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12"
+											th:text="#{|${baseMessageKey}.detail.password|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<input class="form-control" id="pwd" type="password"
+												value="**********" readonly>
+										</div>
+									</div>
+									<!-- Status -->
+									<div class="form-group row">
+										<label for="pwd"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.status|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<select id="status" class="form-control" th:field="*{status}"
+												required>
+												<option th:each="userStatus : ${userStatuses}"
+													th:value="${userStatus}"
+													th:text="#{'user.status.' + ${userStatus}}">
+												</option>
+											</select>
+										</div>
+									</div>
+									<!-- Referral Code -->
+									<div class="form-group row">
+										<label for="refcode"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12"
+											th:text="#{|${baseMessageKey}.detail.refcode|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<input class="form-control" type="text" id="refcode"
+												th:field="*{referralCode}">
+										</div>
+									</div>
+									<!-- User Type -->
+									<div class="form-group row" id="account_type_div">
+										<label for="userType"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+											th:text="#{|${baseMessageKey}.detail.usertype|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+											<select id="userType" class="form-control"
+												th:field="*{userType}" required>
+												<option th:each="userType : ${userTypes}" th:value="${userType}"
+													th:text="#{'user.type.' + ${userType}}"></option>
+											</select>
+										</div>
+
+									</div>
+									<div id="admin_permissions_div">
+										<div class="form-group row"
+											th:each="permission, itemStats : ${dto.permissions}"> <!-- .replaceAll('\', '') -->
+											<label
+												class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-12 required-field"
+													th:text="#{'permission' + ${permission.functionality.path}}"></label> 
+												<input 	type="hidden" th:field="*{permissions[__${itemStats.index}__].user}" /> 
+												<input type="hidden" th:field="*{permissions[__${itemStats.index}__].functionality}" />
+												<input type="hidden" th:field="*{permissions[__${itemStats.index}__].id}" />
+											<div class="custom-col-lg-7 custom-col-md-8 custom-col-sm-12">
+												<select class="form-control"
+													th:field="*{permissions[__${itemStats.index}__].userPermission}"
+													th:value="${permission.userPermission}">
+													<option th:each="userPermission : ${userPermissions}" 
+														th:value="${userPermission}"
+														th:text="#{'permission.' + ${userPermission}}"></option>
+												</select>
+											</div>
+										</div>
+
+									</div>
+
+									<!-- Subscription -->
+									<div class="form-group row"
+										th:if="!${#strings.contains(action, 'create')}">
+										<label for="subscription"
+											class="label form-control-label custom-col-lg-4 custom-col-md-4 custom-col-sm-6"
+											th:text="#{|${baseMessageKey}.detail.subscription|}"></label>
+										<div class="custom-col-lg-7 custom-col-md-4 custom-col-sm-6">
+											<a
+												th:if="${dto.subscription != null && dto.subscription.id != 0}"
+												th:href="@{/subscription/edit/{id}(id=${dto.subscription.id})}"												
+												th:text="${dto.subtype}" >
+											</a> 
+										</div>
+									</div>
+									<!-- Code -->
+									<div
+										th:if="${dto.subscription != null && dto.subscription.businessCode != null}">
+										<div class="form-group row" id="account_type_div">
+											<label for="subscription"
+												class="label form-control-label  custom-col-lg-4 custom-col-md-4 custom-col-sm-6"
+												th:text="#{'discount.code.type.' + ${dto.subscription.businessCode.type}}">
+											</label>
+											<div class="custom-col-lg-3 custom-col-md-4 custom-col-sm-6">
+												<label for="subscription"
+													class="label form-control-label"
+													th:text="${dto.subscription.businessCode.name}"> </label>
+											</div>
+										</div>
+									</div>
+									<!-- Save or Back actions -->
+									<!-- <th:block th:replace="fragments/data-page-options :: form-action-no-offset"></th:block> -->
+
+									<!-- <div class="form-group row" th:if="${writePermission}">
+											<button type="submit" class="btn btn-primary  custom-col-lg-4 custom-col-md-4 custom-col-sm-6"
+												th:title="#{action.save.title}">
+												<i class="fas fa-save"></i> <span class="hidden-xs"
+													th:text="#{action.save}"></span>
+											</button>
+
+											<div class="custom-col-lg-4 custom-col-md-4 custom-col-sm-6"> 
+												<a class="btn btn-outline-warning"
+													th:href="${baseURL + '/current-page'}"
+													th:title="#{action.go.to.list.title}"> <span
+													class="btn-inner--icon"> <i
+														class="fas fa-arrow-left"></i> <span
+														th:text="#{action.go.to.list}"></span>
+												</span>
+												</a>
+											</div>
+									</div>  -->	
+								</div>
+							</div>
+						</fieldset>
+						<th:block th:replace="fragments/data-page-options :: form-action-no-offset"></th:block>
+						
+
+					</form>
+
+				</div>
+
+			</div>
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<section layout:fragment="scripts">
+		<script>
+		var editAccType = 2;
+		var editPermissions = 2;
+	</script>
+		<div th:if="${editAccType != null}">
+			<script>
+		   	editAccType = [[${editAccType}]];
+	   </script>
+		</div>
+		<div th:if="${editPermissions != null}">
+			<script>
+			editPermissions = [[${editPermissions}]];
+	   </script>
+		</div>
+		<script>
+
+
+	function selectLoginType() {
+		var selectedLoginType = $("select#loginType").children("option:selected").val();
+		if (selectedLoginType == 0) {
+			$("#password_div").show();
+			$("#reset_pwd_email_div").show();
+		} else {
+			$("#password_div").hide();
+			$("#reset_pwd_email_div").hide();
+		}
+	}
+
+	function selectUserType() {
+		var selectedUserType = $("select#userType").children("option:selected").val();
+		if (selectedUserType == "ADM") {
+			$("#admin_permissions_div").show();
+		} else {
+			$("#admin_permissions_div").hide();
+		}
+	}
+	
+	function selectAccountType() {
+		if (editAccType == 1 || editAccType == 0) {
+			$('#userType').css('pointer-events','none'); //Disable access to select account type
+		}
+	}
+	
+	function selectEditPermissions() {
+		if (editPermissions == 1 || editPermissions == 0) {
+			$('#admin_permissions_div').css('pointer-events','none'); //Disable access to edit permissions
+		}
+	}
+
+	
+	$(document).ready(function() {
+
+		showOnLoadedModal();
+
+		selectLoginType();
+		selectUserType();
+		selectAccountType();
+		selectEditPermissions();
+		
+		$("select#loginType").change(function() {
+			selectLoginType();
+		});
+		$("select#userType").change(function() {
+			selectUserType();
+		});
+	});
+</script>
+	</section>
+
+</body>
+</html>

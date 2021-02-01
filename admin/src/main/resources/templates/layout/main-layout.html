@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	th:with="lang=${#locale.language}" th:lang="${lang}">
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Be Your Self Application</title>
+
+	<!-- Favicon -->
+	<link type="image/png" th:href="@{/images/favicon/logo_carre_bleu.png}" rel="icon" >
+
+	<!-- Icons -->
+	<link type="text/css" th:href="@{/css/fontawesome.min.css}" rel="stylesheet" />
+	
+	<!--  CSS -->
+	<link type="text/css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+	<link type="text/css" th:href="@{/css/argon.min.css}" rel="stylesheet" />
+	
+	<!--  Media Player -->
+	<link type="text/css" th:href="@{/css/media.player.css}" rel="stylesheet" />
+	
+	<link type="text/css" th:href="@{/css/dataTables.bootstrap4.min.css}" rel="stylesheet" />
+	<link type="text/css" th:href="@{/css/bootstrap-select.min.css}" rel="stylesheet" />
+	<link type="text/css" th:href="@{/css/ajax-bootstrap-select.min.css}" rel="stylesheet" />
+	
+	<link type="text/css" th:href="@{/css/main.css}" rel="stylesheet" />
+	
+	<th:block layout:fragment="stylesheets"></th:block>
+	
+	<!-- JS Core -->
+	<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+	<script th:src="@{https://maps.googleapis.com/maps/api/js?key={key}&libraries=places(key=${GOOGLE_MAP_API_KEY})}"></script>
+	
+	<style>
+	@media  (min-width: 1268px){
+    .navbar-expand-custom {
+        flex-direction: col;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+     .navbar-expand-custom .navbar-nav {
+        flex-direction: row;
+    }
+    .navbar-expand-custom .navbar-nav .nav-link {
+        padding-right: .5rem;
+        padding-left: .5rem;
+    }
+    .navbar-expand-custom .navbar-collapse {
+        display: flex!important;
+    }
+    .navbar-expand-custom .navbar-toggler {
+        display: none;
+    } 
+}
+	</style>
+</head>
+<body>
+	<nav th:insert="layout/main-side-nav :: side-nav" 
+		class="navbar navbar-vertical fixed-left navbar-expand-md  navbar-light bg-white" id="sidenav-main">
+	</nav>
+
+	<div class="main-content">
+		<nav th:insert="layout/main-header :: header" 
+			class="navbar navbar-top navbar-expand-md navbar-dark bg-gradient-primary" id="navbar-main">
+		</nav>
+		
+		<div class="pb-7"></div>
+				
+		<div class="container-fluid" id="main-content">
+			<th:block layout:fragment="content"></th:block>		
+			
+			<footer th:insert="layout/main-footer :: footer" class="footer"></footer>
+		</div>
+	</div>
+	<script> 
+			function checkSize() {
+				var windowsize = $(window).width();
+            	if (windowsize == 768) {
+            		$("#sidenav-main").removeClass("navbar-expand-md");
+            		$("#sidenav-main").addClass("navbar-expand-lg");
+            		$("#main-content").css({top: '-15px', left:'-5px', position:'relative'});
+            		/* $("#user_dropdown").removeClass("d-md-flex");
+            		$("#user_dropdown").addClass("d-lg-flex"); */
+            	} else {
+            		$("#sidenav-main").removeClass("navbar-expand-lg");
+            		$("#sidenav-main").addClass("navbar-expand-md");
+            		$("#main-content").css({top: '0px', left: '0px', position:'relative'});
+            	}
+			}
+			
+            $(document).ready(function() { 
+            	//checkSize();
+                $(window).resize(function() { 
+                	//checkSize();
+                }); 
+            });
+        </script> 
+
+	<script type="text/javascript" th:src="@{/js/argon.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/media.player.min.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/js/jquery.dataTables.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/dataTables.bootstrap4.min.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/ajax-bootstrap-select.min.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/js/main.js}"></script>
+	
+	<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<!-- Form -->
+		<div class="row">
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-header border-0">
+					<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+						<!-- <div class="row">
+							<div class="col-6">
+								<a class="btn btn-icon btn-2 btn-primary"
+									th:href="${baseURL + '/current-page'}"
+									th:title="#{action.go.to.list.title}"> <span
+									class="btn-inner--icon"> <i class="fas fa-arrow-left"></i>
+										<span th:text="#{action.go.to.list}"></span>
+								</span>
+								</a>
+							</div>
+
+							<div class="col-6 text-right">
+								<h3 class="mb-0" th:text="${formTitle}"></h3>
+							</div>
+						</div> -->
+					</div>
+
+					<div class="card-body border-0">
+						<form
+							th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+							th:object="${dto}" method="post">
+							<fieldset th:disabled="${!writePermission}">
+								<div class="row">
+									<div class="col">
+										<!-- User -->
+										<div class="form-group row">
+											<label for="groupId"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12  required-field"
+												th:text="#{|${baseMessageKey}.detail.user|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="selectpicker show-tick w-auto" id="userId" th:field="*{userId}"
+												data-live-search="true"
+												data-actions-box="true" required>
+													<option th:each="user : ${users}" th:value="${user.id}"
+														th:text="${user.email}"></option>
+												</select>
+											</div>
+										</div>
+										
+										<!-- IP Address -->										
+										<div th:if="${!#strings.contains(action, 'create')}" 
+												class="form-group row" id="account_type_div">
+											<label
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12"
+												th:text="#{|${baseMessageKey}.detail.ip.address|}">
+											</label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<label class="label form-control-label"
+													th:text="${dto.ipAddress}">
+												</label>
+											</div>
+										</div>
+										<!-- Subscription type and canal -->
+										<div class="form-group row">
+											<label for="subtypeId"
+												class="label form-control-label  col-xl-3 col-lg-4 col-md-5 col-sm-12  required-field"
+												th:text="#{|${baseMessageKey}.detail.subtype|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="form-control" id="subtypeId"
+													th:field="*{subtypeId}" required>
+													<option th:each="subtype : ${subtypes}"
+														th:value="${subtype.id}" th:text="${subtype.name}">
+													</option>
+												</select>
+											</div>
+											<label for="canal"
+												class="label form-control-label col-xl-3 custom-lg-mg-top col-lg-4 col-md-5 col-sm-12  cutom-xl-mg-right  custom-md-mg-top custom-sm-mg-top custom-xs-mg-top required-field"
+												th:text="#{|${baseMessageKey}.detail.canal|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12 custom-lg-mg-top custom-md-mg-top">
+												<select class="form-control " id="canal"
+													th:field="*{canal}" required>
+													<option th:each="canal : ${canals}"
+														th:value="${canal}" th:text="${canal}">
+													</option>
+												</select>
+											</div>
+										</div>
+										<!-- Validity start and end date -->
+										<div class="form-group row">
+											<!-- Validity start date -->
+											<label for="validStartDate"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12 required-field"
+												th:text="#{|${baseMessageKey}.detail.validstartdate|}"></label>
+
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12 input-group">
+													<input type="text" class="form-control datepicker" 
+														th:field="*{validStartDate}" id="validStartDate" 
+														th:data-date-format="${dateFormat.toLowerCase()}" 
+														autocomplete="off" required />
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+													</div>
+											</div>
+											<!-- Validity end date -->
+											<label for="validEndDate"
+												class="label form-control-label col-xl-3 custom-lg-mg-top col-lg-4 col-md-5 col-sm-12 cutom-xl-mg-right custom-md-mg-top custom-sm-mg-top custom-xs-mg-top required-field"
+												th:text="#{|${baseMessageKey}.detail.validenddate|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12 custom-lg-mg-top custom-md-mg-top input-group">
+													<input type="text" class="form-control datepicker" 
+														th:field="*{validEndDate}" id="validEndDate" 													 
+														th:data-date-format="${dateFormat.toLowerCase()}" 
+														autocomplete="off" required />
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+													</div>
+											</div>
+										</div>
+										<!-- Duration -->
+										<div class="form-group row">
+											<label for="duration"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12  required-field"
+												th:text="#{|${baseMessageKey}.detail.duration|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="form-control" id="duration"
+													th:field="*{duration}" required>
+													<option th:each="duration : ${durations}"
+														th:value="${duration}"
+														th:text="${duration} + ' ' + #{|${baseMessageKey}.detail.duration.unit|}">
+													</option>
+												</select>
+											</div>
+										</div>
+										<!-- Subscription start and end date -->
+										<div class="form-group row">
+											<!-- Subscription start date -->
+											 <label for="subscriptionStartDate"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12 required-field"
+												th:text="#{|${baseMessageKey}.detail.subscriptionstartdate|}"></label>
+
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12 input-group">
+													<input type="text" class="form-control datepicker" 
+														th:field="*{subscriptionStartDate}" id="subscriptionStartDate" 													
+														th:data-date-format="${dateFormat.toLowerCase()}" 
+														autocomplete="off" required />
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+													</div>
+												</div>
+											<!-- Subscription end date -->
+											<label for="subscriptionEndDate"
+												class="label form-control-label col-xl-3 custom-lg-mg-top col-lg-4 col-md-5 col-sm-12 cutom-xl-mg-right custom-md-mg-top custom-sm-mg-top custom-xs-mg-top required-field"
+												th:text="#{|${baseMessageKey}.detail.subscriptionenddate|}"></label>
+
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12 custom-lg-mg-top custom-md-mg-top input-group">
+													<input type="text" class="form-control  datepicker" 
+														th:field="*{subscriptionEndDate}" id="subscriptionEndDate" 
+														th:data-date-format="${dateFormat.toLowerCase()}" 
+														autocomplete="off" required />
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+													</div>
+												</div>
+										</div>
+										<!-- Price -->
+										<div class="form-group row">
+											<label for="price"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12 required-field"
+												th:text="#{|${baseMessageKey}.detail.price|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<input type="number" step="0.01" class="form-control"
+													id="price" th:field="*{price}"
+													required/>
+												<div class="invalid-feedback"></div>
+											</div>
+										</div>
+
+										<!-- Status -->
+										<div class="form-group row">
+											<label for="status"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-5 col-7"
+												th:text="#{|${baseMessageKey}.detail.status|}"></label>
+											<div class="col-1">
+												<input id="status" th:field="*{status}" type="checkbox">
+											</div>
+										</div>
+										<!-- Termination asked -->
+										<div class="form-group row">
+											<label for="terminationAsked"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-5 col-7"
+												th:text="#{|${baseMessageKey}.detail.terminationasked|}"></label>
+											<div class=" col-1">
+												<input id="terminationAsked" th:field="*{terminationAsked}" type="checkbox">
+											</div>
+										</div>		
+										<!-- Payment status -->
+										<div class="form-group row">
+											<label for="paymenstatus"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12 required-field"
+												th:text="#{|${baseMessageKey}.detail.paymentstatus|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="form-control" id="paymenstatus"
+													th:field="*{paymentStatus}" required>
+													<option th:each="paymentStatus : ${paymentStatuses}"
+														th:value="${paymentStatus}" th:text="#{'payment.status.' + ${paymentStatus}}">
+													</option>
+												</select>
+											</div>
+										</div>		
+										<!-- Payment Gateway -->
+										<div class="form-group row">
+											<label for="gateway"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12 required-field"
+												th:text="#{|${baseMessageKey}.detail.paymentgateway|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="form-control" id="gateway"
+													th:field="*{paymentGateway}" required>
+													<option th:each="paymentGateway : ${paymentGateways}"
+														th:value="${paymentGateway}" th:text="${paymentGateway}">
+													</option>
+												</select>
+											</div>
+										</div>										
+										<!-- Code -->
+										<input type="hidden" id="codeId"  name="codeId"  th:value="${currentCodeId}">
+										
+										<div class="form-group row" th:each="type: ${codeTypes}" >
+											<label 
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12"
+												th:text="#{'discount.code.type.' + ${type}}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<select class="form-control" th:id="'select_code_' + ${type}" name="select_type">
+													<option value="-1"></option>
+													<option th:each="code : ${codeMap.get(type)}"
+														th:value="${code.id}" th:text="${code.name}">
+													</option>
+												</select>
+											</div>
+										</div>
+										<script>
+										$(document).ready(function() {
+											var selects = document.getElementsByName("select_type");
+											if (document.getElementById('codeId').value != 0) {
+												for (var i = 0; i < selects.length; i++) {
+												     $(selects[i]).val(document.getElementById('codeId').value);
+												}
+											}
+											$("select[name ='select_type']").change( function(){
+													selectedCode = $(this).val();
+													//alert(this.id);
+													document.getElementById('codeId').value = $(this).val();
+													//alert(document.getElementById('codeId').value);
+													var selects = document.getElementsByName("select_type");
+													for (var i = 0; i < selects.length; i++) {
+													     $(selects[i]).val("");
+													}
+													$(this).val(selectedCode);
+												}
+											)
+										});
+										</script>
+										
+										<!-- Buyer Email -->
+										<div class="form-group row">
+											<label for="buyerEmail"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-12"
+												th:text="#{|${baseMessageKey}.detail.buyer.email|}"></label>
+											<div class="col-xl-3 col-lg-8 col-md-7 col-sm-12">
+												<input type="email" class="form-control"
+													id="buyerEmail" th:field="*{buyerEmail}"
+													/>
+												<div class="invalid-feedback"></div>
+											</div>
+										</div>
+										
+										<!-- Automatic renewal: -->
+										<div class="form-group row">
+											<label for="autoRenew"
+												class="label form-control-label col-xl-3 col-lg-4 col-md-5 col-sm-5 col-7"
+												th:text="#{|${baseMessageKey}.detail.autorenew|}"></label>
+											<div class="col-1">
+												<input id="autoRenew" th:field="*{autoRenew}" type="checkbox">
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+							<th:block th:replace="fragments/data-page-options :: form-action-no-offset"></th:block>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script>
+			$(function() {		
+				showOnLoadedModal();
+			});
+		</script>
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+<style>
+/* For mobile phones: */
+/* [class*="custom-col-"] {
+  width: 100%;
+} */
+
+@media only screen and (max-width: 1049px) {
+  /* For tablets: */
+  .custom-col-sm-1 {width: 8.33%;}
+  .custom-col-sm-2 {width: 16.66%;}
+  .custom-col-sm-3 {width: 25%;}
+  .custom-col-sm-4 {width: 33.33%;}
+  .custom-col-sm-5 {width: 41.66%;}
+  .custom-col-sm-6 {width: 50%;}
+  .custom-col-sm-7 {width: 58.33%;}
+  .custom-col-sm-8 {width: 66.66%;}
+  .custom-col-sm-9 {width: 75%;}
+  .custom-col-sm-10 {width: 83.33%;}
+  .custom-col-sm-11 {width: 91.66%;}
+  .custom-col-sm-12 {width: 100%;margin-top: 3px}
+}
+
+@media only screen  and (min-width: 1050px) and (max-width: 1299px) {
+  .custom-col-md-1 {width: 8.33%;}
+  .custom-col-md-2 {width: 16.66%;}
+  .custom-col-md-3 {width: 25%;}
+  .custom-col-md-4 {width: 33.33%; margin-top: 3px}
+  .custom-col-md-5 {width: 41.66%;}
+  .custom-col-md-6 {width: 50%;}
+  .custom-col-md-7 {width: 58.33%;}
+  .custom-col-md-8 {width: 66.66%;}
+  .custom-col-md-9 {width: 75%;}
+  .custom-col-md-10 {width: 83.33%;}
+  .custom-col-md-11 {width: 91.66%;}
+  .custom-col-md-12 {width: 100%;margin-top: 5px}
+  .custom-col-md-32 {width: 32%;}
+}
+
+@media only screen and (min-width: 1300px) {
+  /* For desktop: */
+  .custom-col-lg-1 {width: 8.33%;}
+  .custom-col-lg-2 {width: 16.66%;}
+  .custom-col-lg-3 {width: 25%; text-align: right}
+  .custom-col-lg-4 {width: 33.33%;}
+  .custom-col-lg-5 {width: 41.66%;}
+  .custom-col-lg-6 {width: 50%;}
+  .custom-col-lg-7 {width: 58.33%;}
+  .custom-col-lg-8 {width: 66.66%;}
+  .custom-col-lg-9 {width: 75%;}
+  .custom-col-lg-10 {width: 83.33%;}
+  .custom-col-lg-11 {width: 91.66%;}
+  .custom-col-lg-12 {width: 100%;}
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<form id="select_form" role="form"
+					th:action="${baseURL} + '/search'" method="get">
+					<th:block th:replace="fragments/data-page-options :: list-header"></th:block>
+					<div class="row form-search-container">
+						<div class="custom-col-lg-9 custom-col-md-12 custom-col-sm-12" >
+							<select id="filter_status" name="filter_status"
+								class="selectpicker show-tick custom-col-md-4 custom-col-sm-12">
+								<option value="" th:text="#{|${baseMessageKey}.option.filter.status.title|}">FILTER BY STATUSES</option>
+								
+								<option th:each="userStatus : ${userStatuses}"
+									th:value="${userStatus}"
+									th:text="#{'user.status.' + ${userStatus}}"
+									></option>
+							</select>
+						
+							<select id="filter_subtype" class="selectpicker show-tick custom-col-md-4 custom-col-sm-12"
+								multiple data-actions-box="true" data-live-search="true"
+								th:data-select-all-text="#{data.display.button.select.all}"
+								th:data-deselect-all-text="#{data.display.button.deselect.all}"
+								th:title="#{|${baseMessageKey}.option.filter.subtype.title|}"
+								th:data-none-selected-text="#{|${baseMessageKey}.option.filter.subtype.title|}"
+								data-selected-text-format="count > 2"
+								th:data-count-selected-text="#{|${baseMessageKey}.option.filter.subtype.many|}"
+								>
+								<option th:each="subtype: ${subtypes}" th:value="${subtype.id}"
+									th:text="${subtype.name}"
+									th:selected="${#arrays.contains(filteredSubscriptionTypesIds, subtype.id)}"></option>
+							</select>
+							<select id="filter_role" name="filter_role"
+								class="selectpicker show-tick custom-col-md-32 custom-col-sm-12" style="text-align: right">
+								<option value="" th:text="#{|${baseMessageKey}.option.filter.role.title|}">FILTER BY ROLES</option>
+								<option th:each="userType : ${userTypes}" th:value="${userType}"
+									th:text="#{'user.type.' + ${userType}}"></option>
+							</select>
+						</div>
+						<!-- <div class="custom-col-lg-3 custom-col-md-12 custom-col-sm-12"> -->
+							<select id="display-page-option" class="selectpicker show-tick custom-col-lg-3 custom-col-md-12 custom-col-sm-12"
+								th:data-none-selected-text="#{data.display.page.option.title}">
+								<option th:each="pageSize: ${supportPageSizes}"
+									th:value="${pageSize}"
+									th:text="#{data.display.page.option.item(${pageSize}, ${pageSizeName})}"
+									th:selected="${size != null && size == pageSize}"></option>
+								<option value="-1"
+									th:text="#{data.display.page.option.all(${pageSizeName})}"
+									th:selected="${size == null || size <= 0}"></option>
+							</select>
+						<!-- </div> -->
+					</div>
+					<input type="submit" style="display: none" />
+
+				</form>
+				<div class="row  form-search-container">
+					<div class="col ">
+						<a href="#select_users" class="btn btn-sm btn-primary mt-2"><span
+								th:text="#{data.display.button.select.deselect.all}"></span></a> 
+						<a href="#" class="btn btn-sm btn-primary mt-2"
+							onclick="submitUserForm();"><span
+								th:text="#{csv.action.export}"></span></a> 
+						<a th:href="${baseURL + '/upload_csv_form'}"
+							class="btn btn-sm btn-primary mt-2" th:if="${writePermission}" th:text="#{csv.action.import}"></a>
+					</div>
+				</div>
+			</div>
+			<script th:inline="javascript">
+					function submitUserForm(){
+						var nb_selected_id = $("#select_user_form").find('input[name="selected_id"]:checked').length;
+						if (nb_selected_id == 0) {
+							alert([[#{csv.info.exp.select.element}]]);
+							return false;
+						} else {
+							document.getElementById('select_user_form').submit();
+						}
+					}
+			</script>
+			<!-- Table -->
+			<div class="table-responsive">
+				<form id="select_user_form" th:action="${baseURL + '/exportcsv'}"
+					method="post">
+					<table class="table align-items-center table-flush" th:id="${pageName + '-data-table'}">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col"></th>
+								<th scope="col"><span th:utext=#{users.list.email}></span></th>
+								<th scope="col"><span th:utext=#{users.list.fullname}></span></th>
+								<th scope="col"><span th:utext=#{users.list.status}></span></th>
+								<th scope="col"><span th:utext=#{users.list.subtype}></span></th>
+								<th scope="col"><span th:utext=#{users.list.role}></span></th>
+								<th scope="col" th:if="${readPermission}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="item : ${result.items}">
+								<td><input type="checkbox" name="selected_id"
+									id="selected_id" th:value="${item.id}"></input></td>
+								<td><span th:text="${item.email}"> Email </span></td>
+								<td><span th:if="${item != null}"
+									th:utext="${item.fullName}"></span></td>
+								<td><span th:if="${item != null}"
+									th:utext="#{'user.status.' + ${item.status}}"></span></td>
+
+								<td><span
+									th:if="${item != null && item.subscription != null && 
+												item.subscription.subtype != null}"
+									th:utext="${item.subscription.subtype.name}"></span></td>
+								<td><span th:if="${item != null}"
+									th:utext="#{'user.type.' + ${item.userType}}"></span></td>
+
+								<td class="text-right" th:if="${writePermission}">
+									<a
+										class="btn btn-icon btn-2 btn-primary"
+										th:href="${baseURL + '/edit/' + item.id}"
+										th:title="#{action.edit.title}"> <span
+											class="btn-inner--icon"> <i class="fas fa-edit"></i>
+										</span>
+									</a>
+
+									<button class="btn btn-icon btn-2 btn-danger" type="button"
+										th:title="#{action.delete.title}"
+										th:onclick="confirmDelete([[${item.id}]])">
+										<span class="btn-inner--icon"> <i class="fas fa-times"></i>
+										</span>
+									</button>
+								</td>
+								<td class="text-right" th:if="${!writePermission && readPermission}">
+									<a class="btn btn-icon btn-2 btn-info" th:href="${baseURL + '/view/' + item.id}" th:title="#{action.view.title}">
+										<span class="btn-inner--icon">
+											<i class="fas fa-eye"></i>
+										</span>
+									</a>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</form>
+
+			</div>
+			<!-- End table -->
+
+			<div class="card-footer py-4"
+				th:insert="fragments/data-list-pagination :: pagination"></div>
+		</div>
+
+		<div class="modal fade" id="confirm-delete-modal" tabindex="-1"
+			role="dialog" aria-labelledby="deleteConfirmModal" aria-hidden="true"
+			data-backdrop="false">
+			<div class="modal-dialog modal-dialog-centered modal-7"
+				role="document">
+				<div class="modal-content">
+					<form id="confirm-delete-form" action="javascript:;" method="POST">
+						<div class="modal-header modal-header-danger">
+							<h3 class="modal-title" id="confirm-delete-modal-title"
+								th:utext="#{modal.confirm.delete.title}"></h3>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p
+								th:utext="#{modal.confirm.delete.message(#{${baseMessageKey} + '.name'})}"></p>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-danger"
+								th:utext="#{modal.button.yes}">Yes</button>
+							<button type="button" class="btn btn-secondary ml-auto"
+								data-dismiss="modal" th:utext="#{modal.button.no}">No</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<th:block th:replace="fragments/data-list-modals :: modals"></th:block>
+	</th:block>
+
+
+	<section layout:fragment="scripts">
+		<script>
+			var filter_role = "";
+			var filter_status = "";
+			var filter_subtype = -2;
+			
+		</script>
+
+		<script th:if="${filterSubtype != null}">
+			filter_subtype = "[[${filterSubtype}]]";
+		</script>
+
+		<script th:if="${filterRole != null}">
+			filter_role = "[[${filterRole}]]";
+		</script>
+
+		<script th:if="${filterStatus != null}">
+			filter_status = "[[${filterStatus}]]";
+		</script>
+		<script>
+			var select_all = false;
+			function confirmDelete(id) {
+				var url = '[[${baseURL}]]/delete/' + id;
+
+				$('#confirm-delete-form').attr('action', url);
+				showModal('confirm-delete-modal');
+			}
+
+			
+			$(document).ready(function() {
+								showOnLoadedModal();
+								if ([[${writePermission}]]) {
+								 	$('#users-data-table').dataTable({
+										"sDom" : 't',
+										"order": [],
+										 "aoColumns": [
+											 {  "orderable": false },
+											    null,
+											    null,
+											    null,
+											    null,
+											    null,
+										    { "orderable": false  }
+										  ]
+									}); 
+								} else {
+									$('#users-data-table').dataTable({
+										"sDom" : 't',
+										"order": [],
+										"aoColumns": [
+											 {"orderable": false },
+											    null,
+											    null,
+											    null,
+											    null,
+											    null,
+										  ]
+									}); 
+								}
+								
+								 
+								//$('#filter_role').val(filter_role);
+								//$("#filter_status").val(filter_status);
+								$('#filter_role').selectpicker('val', filter_role);
+								$('#filter_status').selectpicker('val', filter_status);
+								$("select#filter_subtype")
+										.change(function() {
+													$("#filter_role").val($("#filter_role option:first").val());
+													$("#filter_status").val($("#filter_status option:first").val());
+
+													const selectedStatus = $('#filter_status').val();
+													const selectedRole = $('#filter_role').val();
+													const selectedSubtype = $('#filter_subtype').val();
+													encodedSelectedSubtypeIds = encodeURIComponent(selectedSubtype.join(','));
+
+													window.location = '[[${baseURL}]]/search?action=update-filter&filterRole='
+															+ selectedRole
+															+ '&filterStatus='
+															+ selectedStatus
+															+ '&filterSubscriptionTypesIds='
+															+ encodedSelectedSubtypeIds;
+												});
+
+								$("select#filter_status")
+										.change(function() {
+													$("#filter_role").val($("#filter_role option:first").val());
+													$('#filter_subtype').selectpicker('val', '');
+
+													const selectedStatus = $('#filter_status').val();
+													const selectedRole = $('#filter_role').val();
+													const selectedSubtype = $('#filter_subtype').val();
+													encodedSelectedSubtypeIds = encodeURIComponent(selectedSubtype.join(','));
+
+													window.location = '[[${baseURL}]]/search?action=update-filter&filterRole='
+															+ selectedRole
+															+ '&filterStatus='
+															+ selectedStatus
+															+ '&filterSubscriptionTypesIds='
+															+ encodedSelectedSubtypeIds;
+												});
+
+								$("select#filter_role").change(
+												function() {
+													$("#filter_status").val($("#filter_status option:first").val());
+													$('#filter_subtype').selectpicker('val', '');
+
+													const selectedRole = $('#filter_role').val();
+													const selectedStatus = $(
+															'#filter_status')
+															.val()
+													const selectedSubtype = $(
+															'#filter_subtype')
+															.val();
+													encodedSelectedSubtypeIds = encodeURIComponent(selectedSubtype
+															.join(','));
+
+													window.location = '[[${baseURL}]]/search?action=update-filter&filterRole='
+															+ selectedRole
+															+ '&filterStatus='
+															+ selectedStatus
+															+ '&filterSubscriptionTypesIds='
+															+ encodedSelectedSubtypeIds;
+
+												});
+
+								$('a[href="#select_users"]').click(
+										function() {
+											if (select_all == false) {
+												$("[name='selected_id']").prop('checked', true);
+												select_all = true;
+											} else {
+												$("[name='selected_id']").prop('checked', false);
+												select_all = false;
+											}
+										});
+
+								$('#display-page-option').on('changed.bs.select',
+												function(e, clickedIndex,
+														isSelected,
+														previousValue) {
+													const selectedPageSize = $('#display-page-option').val();
+													window.location = '[[${baseURL}]]/search?action=update-filter&page=1&size='
+															+ selectedPageSize;
+												});
+							});
+		</script>
+
+	</section>
+
+</body>
+</html>

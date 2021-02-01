@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="stylesheets">
+		<style type="text/css">
+			#[[${pageName + '-data-form'}]] .image-preview {
+				max-height: 250px;
+			}
+		</style>
+	</th:block>
+	
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+			</div>
+			
+			<div class="card-body border-0">
+				<form action="#" th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+					th:id="${pageName + '-data-form'}"
+					th:object="${dto}" method="post" enctype="multipart/form-data">
+					<fieldset th:disabled="${!writePermission}">
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Invalid username and password.</div>
+						</div>
+		
+						<div th:if="${param.logout}">
+							<div class="alert alert-info">You have been logged out.</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-lg-8 col-md-12 col-sm-12">
+								<div class="form-group row">
+									<label for="title" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs required-field" 
+										th:text="#{|${baseMessageKey}.detail.title|}"></label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<input type="text" class="form-control" 
+											th:field="*{title}" id="title"
+											th:placeholder="#{|${baseMessageKey}.detail.title.placeholder|}" 
+											required="required" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+									</div>
+								</div>
+								
+								<th:block th:switch="${action}">
+									<div th:case="create" class="form-group row">
+										<label for="uploadImageFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs required-field" 
+											th:text="#{|${baseMessageKey}.detail.image|}"></label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadImageFile}" id="uploadImageFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.image.placeholder|}" required="required"
+													th:accept="${supportImageTypes}" onChange="selectImage(this)"
+													th:default-src="@{/images/default/{pageName}.png(pageName=${pageName})}" />
+												<label class="custom-file-label" for="uploadImageFile" id="imageFileLabel" 
+													th:data-browse="#{action.select.image}" 
+													th:data-browse-short-label="#{action.select.image.short.label}"
+													th:text="#{|${baseMessageKey}.detail.image.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+										</div>
+									</div>
+									<div th:case="*" class="form-group row">
+										<label for="uploadImageFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs" 
+											th:text="#{|${baseMessageKey}.detail.image|}"></label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadImageFile}" id="uploadImageFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.image.placeholder|}" 
+													th:accept="${supportImageTypes}" onChange="selectImage(this)"
+													th:default-src="${baseMediaURL + '/image/view/' + dto.image}" />
+												<label class="custom-file-label" for="uploadImageFile" id="imageFileLabel" 
+													th:data-browse="#{action.select.image}" 
+													th:data-browse-short-label="#{action.select.image.short.label}"
+													th:text="#{|${baseMessageKey}.detail.image.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+										</div>
+									</div>
+								</th:block>
+								
+								<th:block th:switch="${action}">
+									<div th:case="create" class="form-group row">
+										<label for="uploadContentFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs required-field" 
+											th:text="#{|${baseMessageKey}.detail.content.file|}"></label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadContentFile}" id="uploadContentFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.content.file.placeholder|}" required="required"
+													th:accept="${supportMediaTypes}" onChange="selectMedia(this)"/>
+												<label class="custom-file-label" for="uploadContentFile" id="contentFileLabel" 
+													th:data-browse="#{action.select.media}" 
+													th:data-browse-short-label="#{action.select.media.short.label}"
+													th:text="#{|${baseMessageKey}.detail.content.file.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('contentFile')}" th:errors="*{contentFile}"></div>
+										</div>
+									</div>
+									<div th:case="*" class="form-group row">
+										<label for="uploadContentFile" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs" 
+											th:text="#{|${baseMessageKey}.detail.content.file|}"></label>
+										<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" th:field="*{uploadContentFile}" id="uploadContentFile" 
+													th:placeholder="#{|${baseMessageKey}.detail.content.file.placeholder|}" 
+													th:accept="${supportMediaTypes}" onChange="selectMedia(this)" 
+													th:default-src="${baseMediaURL + '/media/view/' + dto.contentFile}"
+													th:default-mime-type="${dto.contentMimeType}"/>
+												<label class="custom-file-label" for="uploadContentFile" id="contentFileLabel" 
+													th:data-browse="#{action.select.media}" 
+													th:data-browse-short-label="#{action.select.media.short.label}"
+													th:text="#{|${baseMessageKey}.detail.content.file.placeholder|}"></label>
+											</div>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('contentFile')}" th:errors="*{contentFile}"></div>
+										</div>
+									</div>
+								</th:block>
+								
+								<input type="hidden" th:field="*{duration}" id="duration" />
+								<div class="form-group row" th:if="${action != 'create'}">
+									<label for="durationValue" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs required-field" 
+										th:text="#{|${baseMessageKey}.detail.duration|}"></label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<input type="text" class="form-control" 
+											id="durationValue" th:value="${duration}"
+											th:placeholder="#{|${baseMessageKey}.detail.duration.placeholder|}" 
+											readonly="readonly" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="free" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs" 
+										th:text="#{|${baseMessageKey}.detail.free|}"></label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<div class="custom-control custom-control-alternative custom-checkbox label-left">
+											<input class="custom-control-input" th:field="*{free}" id="free" type="checkbox">
+											<label class="custom-control-label label form-control-label" for="free"></label>
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="description" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+										<span class="required-field" th:text="#{|${baseMessageKey}.detail.description|}"></span>
+									</label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<textarea class="form-control" rows="10"
+											th:field="*{description}" id="description" required="required"
+											th:placeholder="#{|${baseMessageKey}.detail.description.placeholder|}"></textarea>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="categoryIds" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+										<span class="required-field" th:text="#{|${baseMessageKey}.detail.categories|}"></span>
+									</label>
+									<div class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+										<div class="row">
+											<div th:each="sessionCategory: ${sessionCategories}" class="col-lg-4 col-smd-6 col-md-6 col-sm-12">
+												<div class="custom-control custom-control-alternative custom-checkbox mb-3">
+													<input class="custom-control-input" type="checkbox" 
+														name="categoryIds" th:id="${'category_' + sessionCategory.id}"
+														th:value="${sessionCategory.id}" 
+														th:checked="${#arrays.contains(dto.categoryIds, sessionCategory.id)}" />
+													<label class="custom-control-label" 
+														th:for="${'category_' + sessionCategory.id}" 
+														th:text="${sessionCategory.name}"></label>
+												</div>
+											</div>
+										</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('categoryIds')}" th:errors="*{categoryIds}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="voiceId" class="label form-control-label col-lg-3 col-md-12 col-smd-12 col-sm-3 hidden-xs">
+										<span class="required-field" th:text="#{|${baseMessageKey}.detail.voice.id|}"></span>
+									</label>
+									<th:block th:switch="${writePermission}">
+										<div th:case="true" class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<select class="form-control voice-selectpicker show-tick" 
+												th:field="*{voiceId}" id="voiceId" required="required"
+												data-actions-box="false" data-live-search="true" 
+												th:title="#{|${baseMessageKey}.detail.voice.id.placeholder|}"
+												th:data-none-selected-text="#{|${baseMessageKey}.detail.voice.id.placeholder|}">
+												
+												<option th:if="${action != 'create' && dto.voiceId != null}" 
+													th:value="${dto.voiceId}" 
+													th:text="${voiceName}"></option>
+											</select>
+											<div class="invalid-feedback" th:if="${#fields.hasErrors('voiceId')}" th:errors="*{voiceId}"></div>
+										</div>
+										<div th:case="*" class="col-lg-9 col-md-12 col-smd-12 col-sm-9 col-xs-12">
+											<span th:utext="${voiceName}"></span>
+										</div>
+									</th:block>
+								</div>
+								
+								<th:block th:replace="fragments/data-page-options :: form-action"></th:block>
+							</div>
+							
+							<div class="col-lg-4 col-md-12 col-sm-12">
+								<div class="form-group row">
+									<div class="col-12 text-center" th:switch="${action}">
+										<img th:case="create" id="imagePreview" class="image-fit image-preview" 
+											src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+										<a th:case="*" th:href="${baseMediaURL + '/image/download/' + dto.image}" 
+											th:title="#{session.category.detail.image.link.title}" target="_blank">
+											<img id="imagePreview" class="image-fit image-preview" 
+												th:alt="${dto.title}" th:src="${baseMediaURL + '/image/view/' + dto.image}">
+										</a>
+									</div>
+								</div>
+								
+								<div class="form-group row" id="audioContainer">
+									<div class="col-12">
+										<audio id="audioPlayer" controls>
+											<source th:if="${action != 'create' && dto.contentFileType != null && dto.contentFileType == 'audio' }" 
+												th:src="${baseMediaURL + '/media/view/' + dto.contentFile}" 
+												th:type="${dto.contentMimeType}" />
+										</audio>
+									</div>
+								</div>
+								
+								<div class="form-group row" id="videoContainer">
+									<div class="col-12" th:switch="${action}">
+										<video th:case="create" id="videoPlayer" controls crossorigin playsinline></video>
+										<video th:case="*" id="videoPlayer" controls crossorigin playsinline 
+											th:poster="${baseMediaURL + '/image/view/' + dto.image}">
+											<source th:if="${dto.contentFileType != null && dto.contentFileType == 'video' }" 
+												th:src="${baseMediaURL + '/media/view/' + dto.contentFile}" th:type="${dto.contentMimeType}" />
+											<a th:if="${dto.contentFileType != null && dto.contentFileType == 'video' }" 
+												th:href="${baseMediaURL + '/media/download/' + dto.contentFile}" download>
+												<i class="fas fa-cloud-download-alt"></i>
+											</a>
+										</video>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			const supportImageTypes = '[[${supportImageTypes}]]';
+			const supportImageFileSize = [[${supportImageSize}]];
+			const defaultImageLabel = '[[#{|${baseMessageKey}.detail.image.placeholder|}]]';
+			
+			const supportAudioTypes = '[[${supportAudioTypes}]]';
+			const supportAudioExtensions = '[[${supportAudioExtensions}]]';
+			const supportVideoTypes = '[[${supportVideoTypes}]]';
+			const supportVideoExtensions = '[[${supportVideoExtensions}]]';
+			const supportMediaTypes = '[[${supportMediaTypes}]]';
+			const supportMediaFileSize = [[${supportMediaSize}]];
+			const defaultMediaLabel = '[[#{|${baseMessageKey}.detail.content.file.placeholder|}]]';
+			
+			const contentFileType = '[[${dto.contentFileType}]]';
+			var audioPlayer;
+			var videoPlayer;
+			
+			function selectImage(inputElement) {
+				validateAndPreviewImage(inputElement, 
+						'imagePreview', 'imageFileLabel', defaultImageLabel,
+						supportImageTypes, supportImageFileSize, 
+						'image-file-type-modal', 'image-file-size-modal');
+			}
+			
+			function selectMedia(inputElement) {
+				validateAndPreviewMedia(inputElement, 
+					audioPlayer, 'audioContainer', 'audioPlayer', 
+					supportAudioTypes, supportAudioExtensions, 
+					videoPlayer, 'videoContainer', 'videoPlayer', 
+					supportVideoTypes, supportVideoExtensions,
+					'contentFileLabel', defaultMediaLabel, 
+					supportMediaTypes, supportMediaFileSize, 
+					'media-file-type-modal', 'media-file-size-modal');
+			}
+			
+			function initializeVoiceSelectPicker() {
+				var voiceSelectpickerOptions = {
+					ajax: {
+						url: '[[${rootURL}]]/common/search',
+						type: 'GET',
+						dataType: 'json',
+						data: function() {
+							return {
+								dataType: 'professional',
+								q: '{{{q}}}'
+							};
+						}
+					},
+					locale: {
+						searchPlaceholder: '[[#{|${baseMessageKey}.option.select.voice.title|}]]',
+						statusSearching: '[[#{searching.placeholder}]]',
+						statusInitialized: '[[#{|${baseMessageKey}.option.select.voice.search.initialized|}]]',
+						currentlySelected: '[[#{|${baseMessageKey}.option.select.voice.search.currently.selected|}]]',
+						emptyTitle: '[[#{|${baseMessageKey}.option.select.voice.search.empty.title|}]]',
+						errorText: '[[#{|${baseMessageKey}.option.select.voice.search.error.text|}]]',
+						statusNoResults: '[[#{|${baseMessageKey}.option.select.voice.search.status.no.results|}]]'
+					},
+					preprocessData: function(data) {
+						let result = [];
+						
+						const dtos = data.items || [];
+						
+						for (i = 0; i < dtos.length; i++) {
+							result.push($.extend(true, dtos[i], {
+								text : dtos[i].name,
+								value: dtos[i].id
+							}));
+						}
+						
+						return result;
+					}
+				};
+				
+				$('.voice-selectpicker')
+					.selectpicker()
+					.ajaxSelectPicker(voiceSelectpickerOptions);
+				
+				$('.voice-selectpicker').trigger('change');
+			}
+			
+		    $(function() {
+		    	$('.selectpicker').selectpicker();
+		    	initializeVoiceSelectPicker();
+		    	
+		    	audioPlayer = new Plyr('#audioPlayer', { invertTime: false });
+		    	videoPlayer = new Plyr('#videoPlayer', { invertTime: false });
+		    	
+		    	if (contentFileType != 'audio') {
+		    		$('#audioContainer').hide();
+		    	}
+		    	
+		    	if (contentFileType != 'video') {
+		    		$('#videoContainer').hide();
+		    	}
+		    	
+		    	audioPlayer.on('loadedmetadata', event => {
+		    	    const instance = event.detail.plyr;
+		    	    const duration = Math.round(instance.duration);
+		    	    
+		    	    if (duration > 0) {
+		    	    	const durationValue = formatDuration(duration);
+		    	    	$('#duration').val(durationValue);
+		    	    	$('#durationValue').val(durationValue);
+		    	    	
+		    	    }
+		    	});
+		    	
+		    	videoPlayer.on('loadedmetadata', event => {
+		    	    const instance = event.detail.plyr;
+		    	    const duration = Math.round(instance.duration);
+		    	    
+		    	    if (duration > 0) {
+		    	    	const durationValue = formatDuration(duration);
+		    	    	$('#duration').val(durationValue);
+		    	    	$('#durationValue').val(durationValue);
+		    	    }
+		    	});
+		    	
+		    	showOnLoadedModal();
+		    });
+		</script>
+	</th:block>
+</body>
+</html>

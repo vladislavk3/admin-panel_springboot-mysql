@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="stylesheets">
+		<style type="text/css">
+			#[[${pageName + '-data-form'}]] .image-preview {
+				max-height: 250px;
+			}
+		</style>
+	</th:block>
+	
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+			</div>
+			
+			<div class="card-body border-0">
+				<form action="#" th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+					th:id="${pageName + '-data-form'}"
+					th:object="${dto}" method="post" enctype="multipart/form-data">
+					<fieldset th:disabled="${!writePermission}">
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Invalid username and password.</div>
+						</div>
+		
+						<div th:if="${param.logout}">
+							<div class="alert alert-info">You have been logged out.</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-12 col-sm-12">
+								<div class="form-group row">
+									<label for="name" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs sm-form-group smd-new-form-group-row">
+										<span class="required-field" th:utext="#{|${baseMessageKey}.detail.name|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12 sm-form-group smd-new-form-group-row">
+										<input type="text" class="form-control" 
+											th:field="*{name}" id="name"
+											th:placeholder="#{|${baseMessageKey}.detail.name.placeholder|}" 
+											required="required" autofocus="autofocus" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+									</div>
+									
+									<th:block th:switch="${action}">
+										<th:block th:case="create">
+											<label for="type" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+												<span class="required-field" th:utext="#{|${baseMessageKey}.detail.type|}"></span>
+											</label>
+											<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12">
+												<select class="form-control selectpicker show-tick" 
+													th:field="*{type}" id="type" required="required" 
+													data-actions-box="false" data-live-search="false" 
+													th:title="#{|${baseMessageKey}.detail.type.placeholder|}"
+													th:data-none-selected-text="#{|${baseMessageKey}.detail.type.placeholder|}">
+													<option th:each="codeType: ${availableCodeTypes}" 
+														th:value="${codeType}" 
+														th:text="#{|discount.code.type.${codeType}|}"></option>
+												</select>
+												<div class="invalid-feedback" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+											</div>
+										</th:block>
+										<th:block th:case="*">
+											<label for="type" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+												<span th:utext="#{|${baseMessageKey}.detail.type|}"></span>
+											</label>
+											<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12">
+												<span th:utext="#{|${baseMessageKey}.type.${dto.type}|}"></span>
+											</div>
+										</th:block>
+									</th:block>
+								</div>
+								
+								<div class="form-group row" id="beneficiaryGroup">
+									<label for="beneficiary" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs">
+										<span id="beneficiaryLabel" th:text="#{|${baseMessageKey}.detail.beneficiary|}"></span>
+									</label>
+									<div class="col-lg-10 col-md-9 col-smd-12 col-sm-9 col-xs-12">
+										<input type="text" class="form-control" 
+											th:field="*{beneficiary}" id="beneficiary"
+											th:placeholder="#{|${baseMessageKey}.detail.beneficiary.placeholder|}" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('beneficiary')}" th:errors="*{beneficiary}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="startDate" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs sm-form-group smd-new-form-group-row">
+										<span id="startDateLabel" th:utext="#{|${baseMessageKey}.detail.start.date|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12 sm-form-group smd-new-form-group-row">
+										<div class="input-group">
+											<input type="text" class="form-control datepicker" 
+												th:field="*{startDate}" id="startDate" 
+												th:placeholder="#{|${baseMessageKey}.detail.start.date.placeholder|}" 
+												th:data-date-format="${dateFormat.toLowerCase()}" 
+												autocomplete="off" />
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+											</div>
+										</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+									</div>
+									
+									<label for="endDate" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+										<span id="endDateLabel" class="required-field" th:text="#{|${baseMessageKey}.detail.end.date|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12">
+										<div class="input-group">
+											<input type="text" class="form-control datepicker" 
+												th:field="*{endDate}" id="endDate"
+												th:placeholder="#{|${baseMessageKey}.detail.end.date.placeholder|}" 
+												th:data-date-format="${dateFormat.toLowerCase()}" 
+												required="required" autocomplete="off" />
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+											</div>
+										</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row" id="discountGroup">
+									<label for="discountType" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs sm-form-group smd-new-form-group-row">
+										<span id="discountTypeLabel" class="required-field" th:text="#{|${baseMessageKey}.detail.discount.type|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12 sm-form-group smd-new-form-group-row">
+										<select class="form-control selectpicker show-tick"
+											th:field="*{discountType}" id="discountType" required="required" 
+											th:data-none-selected-text="#{|${baseMessageKey}.detail.discount.type.placeholder|}">
+											<option value="0" th:text="#{discount.code.discount.type.0}"></option>
+											<option value="1" th:text="#{discount.code.discount.type.1}"></option>
+										</select>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('discountType')}" th:errors="*{discountType}"></div>
+									</div>
+								
+									<label for="discountValue" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+										<span id="discountValueLabel" class="required-field" th:text="#{|${baseMessageKey}.detail.discount.value|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12">
+										<div class="input-group">
+											<input type="number" class="form-control" 
+												th:field="*{discountValue}" id="discountValue"
+												th:placeholder="#{|${baseMessageKey}.detail.discount.value.placeholder|}" 
+												required="required" />
+											<div class="input-group-prepend" id="discountPercentageUnit">
+												<span class="input-group-text">%</span>
+											</div>
+											<div class="input-group-prepend" id="discountAmountUnit">
+												<span class="input-group-text" th:utext="${priceUnitSymbol}"></span>
+											</div>
+										</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"></div>
+									</div>
+								</div>
+								
+								<div class="form-group row" id="b2b100EditableContainer">
+									<label for="dealPrice" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs sm-form-group smd-new-form-group-row">
+										<span id="dealPriceLabel" class="required-field" th:text="#{|${baseMessageKey}.detail.deal.price|}"></span>
+									</label>
+									<div id="dealPriceContainer" class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12 sm-form-group smd-new-form-group-row">
+										<div class="input-group">
+											<input type="number" class="form-control" 
+												th:field="*{dealPrice}" id="dealPrice"
+												th:placeholder="#{|${baseMessageKey}.detail.deal.price.placeholder|}" />
+											<div class="input-group-prepend">
+												<span class="input-group-text" th:utext="${priceUnitSymbol}"></span>
+											</div>
+										</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('dealPrice')}" th:errors="*{dealPrice}"></div>
+									</div>
+									
+									<label for="maxUserAmount" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+										<span id="maxUserAmountLabel" class="required-field" th:text="#{|${baseMessageKey}.detail.max.user.amount|}"></span>
+									</label>
+									<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12">
+										<input type="number" class="form-control" 
+											th:field="*{maxUserAmount}" id="maxUserAmount"
+											th:placeholder="#{|${baseMessageKey}.detail.max.user.amount.placeholder|}" />
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('maxUserAmount')}" th:errors="*{maxUserAmount}"></div>
+									</div>
+								</div>
+								
+								<div id="usedAmountAndPriceContainer" class="form-group row">
+									<th:block th:if="${action != 'create'}">
+										<label for="usedAmount" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs sm-form-group smd-new-form-group-row">
+											<span id="usedAmountLabel" th:text="#{|${baseMessageKey}.detail.used.amount|}"></span>
+										</label>
+										<div class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12 sm-form-group smd-new-form-group-row" 
+											th:title="#{|${baseMessageKey}.detail.used.amount.placeholder|}">
+											<span th:text="${dto.usedAmount}"></span>
+										</div>
+										
+										<label id="pricePerUserLabelContainer" for="pricePerUser" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs md-text-right smd-text-left">
+											<span id="pricePerUserLabel" th:text="#{|${baseMessageKey}.detail.price.per.user|}"></span>
+										</label>
+									</th:block>
+									
+									<th:block th:if="${action == 'create'}">
+										<label id="pricePerUserLabelContainer" for="pricePerUser" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs">
+											<span id="pricePerUserLabel" th:text="#{|${baseMessageKey}.detail.price.per.user|}"></span>
+										</label>
+									</th:block>
+									
+									<div id="pricePerUserContainer" class="col-lg-4 col-md-3 col-smd-12 col-sm-9 col-xs-12" 
+										th:title="#{|${baseMessageKey}.detail.price.per.user.placeholder|}">
+										<span id="pricePerUser" th:text="${dto.pricePerUser}"></span>
+										<span th:utext="${priceUnitSymbol}"></span>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label for="status" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs">
+										<span class="required-field" th:text="#{|${baseMessageKey}.detail.status|}"></span>
+									</label>
+									<div class="col-lg-10 col-md-9 col-smd-12 col-sm-9 col-xs-12">
+										<select class="form-control selectpicker show-tick"
+											th:field="*{status}" id="status" 
+											th:data-none-selected-text="#{|${baseMessageKey}.detail.status.placeholder|}">
+											<!-- 
+											<option value="0" th:text="#{discount.code.status.0}"></option>
+											-->
+											<option value="1" th:text="#{discount.code.status.1}"></option>
+											<option value="2" th:text="#{discount.code.status.2}"></option>
+										</select>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+									</div>
+								</div>
+								
+								<th:block th:replace="fragments/data-page-options :: form-action-lg-2"></th:block>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			const createMode = [[${action == 'create'}]];
+			
+			function changeCodeType(codeType) {
+				// B2B => show beneficiary (company)
+				if (codeType == 0 || codeType == 1) {
+					$('#beneficiaryLabel').addClass('required-field');
+					$('#beneficiary').prop('required', true);
+					
+					$('#beneficiaryGroup').show();
+				} else {
+					$('#beneficiaryLabel').removeClass('required-field');
+					$('#beneficiary').prop('required', false);
+					
+					$('#beneficiaryGroup').hide();
+				}
+				
+				// B2B Multiple 100%
+				if (codeType == 0) {
+					$('#b2b100EditableContainer').show();
+					$('#usedAmountAndPriceContainer').show();
+					$('#pricePerUserLabelContainer').show();
+					$('#pricePerUserContainer').show();
+					
+					$('#dealPrice').prop('required', true);
+					$('#maxUserAmount').prop('required', true);
+				} else {
+					$('#b2b100EditableContainer').hide();
+					$('#pricePerUserLabelContainer').hide();
+					$('#pricePerUserContainer').hide();
+					
+					if (createMode) {
+						$('#usedAmountAndPriceContainer').hide();
+					}
+					
+					$('#dealPrice').prop('required', false);
+					$('#maxUserAmount').prop('required', false);
+				}
+				
+				// B2C 100% Discount
+				if (codeType == 2) {
+					$('#startDateLabel').removeClass('required-field');
+					$('#startDate').prop('required', false);
+				} else {
+					$('#startDateLabel').addClass('required-field');
+					$('#startDate').prop('required', true);
+				}
+				
+				// B2C Discount
+				if (codeType == 3) {
+					$('#discountType').prop('disabled', false);
+					$('#discountValue').prop('disabled', false);
+					$('#discountTypeLabel').removeClass('disabled');
+					$('#discountValueLabel').removeClass('disabled');
+				} else {
+					$('#discountType').val(0);
+					$('#discountValue').val(100);
+					$('#discountType').prop('disabled', true);
+					$('#discountValue').prop('disabled', true);
+					$('#discountTypeLabel').addClass('disabled');
+					$('#discountValueLabel').addClass('disabled');
+				}
+			}
+			
+			function changeDiscountType(discountType) {
+				// Percentage
+				if (discountType == 0) {
+					$('#discountPercentageUnit').show();
+					$('#discountAmountUnit').hide();
+				} else {
+					$('#discountPercentageUnit').hide();
+					$('#discountAmountUnit').show();
+				}
+			}
+			
+			function updatePricePerUser(e) {
+				const dealPrice = $('#dealPrice').val();
+				const maxUserAmount = $('#maxUserAmount').val();
+				
+				var pricePerUser = 0;
+				if (dealPrice > 0 && maxUserAmount > 0) {
+					pricePerUser = (dealPrice / maxUserAmount).toFixed(2);
+				}
+				
+				$('#pricePerUser').text(pricePerUser);	
+			}
+			
+			$(function() {
+				$('select').selectpicker();
+				
+				$('.datepicker').datepicker({
+		            uiLibrary: 'bootstrap4'
+		        });
+				
+				$('#type').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedCodeType = $('#type').val();
+					changeCodeType(selectedCodeType);
+				});
+				
+				$('#discountType').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedDiscountType = $('#discountType').val();
+					changeDiscountType(selectedDiscountType);
+				});
+				
+				$('#dealPrice').on('change keyup', updatePricePerUser);
+				$('#maxUserAmount').on('change keyup', updatePricePerUser);
+				
+				changeCodeType([[${dto.type}]]);
+				changeDiscountType([[${dto.discountType}]]);
+				
+				if (!createMode) {
+					//$('#startDate').datepicker('update', new Date('[[${#dates.format(dto.startDate, 'yyyy-MM-dd')}]]'));
+					//$('#endDate').datepicker('update', new Date('[[${#dates.format(dto.endDate, 'yyyy-MM-dd')}]]'));
+				}
+				
+		    	showOnLoadedModal();
+		    });
+		</script>
+	</th:block>
+</body>
+</html>

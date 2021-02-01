@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title>Home</title>
+
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<form id="select_form" role="form"
+					th:action="${baseURL} + '/search'" method="get">
+					<th:block th:replace="fragments/data-page-options :: list-header"></th:block>
+					
+					<div class="row form-search-container">
+						<div class="col text-right">
+							<select id="display-page-option" class="selectpicker show-tick w-auto"
+								th:data-none-selected-text="#{data.display.page.option.title}">
+								<option th:each="pageSize: ${supportPageSizes}"
+									th:value="${pageSize}"
+									th:text="#{data.display.page.option.item(${pageSize}, ${pageSizeName})}"
+									th:selected="${size != null && size == pageSize}"></option>
+								<option value="-1"
+									th:text="#{data.display.page.option.all(${pageSizeName})}"
+									th:selected="${size == null || size <= 0}"></option>
+							</select>
+						</div>
+					</div>
+					<input type="submit" style="display: none" />
+
+				</form>
+			</div>
+
+			<!-- Table -->
+
+
+			<div class="table-responsive">
+				<form id="select_user_form" th:action="${baseURL + '/exportcsv'}"
+					method="post">
+					<table class="table align-items-center table-flush"  th:id="${pageName + '-data-table'}">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col"><span th:text="#{professional.list.email}"> </span></th>
+								<th scope="col"><span th:text="#{professional.list.fullname}"></span></th>
+								<th scope="col"><span th:text="#{professional.list.address}"></span></th>
+								<th scope="col"><span th:text="#{professional.list.supervised}"></span></th>
+								<th scope="col" th:if="${readPermission}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="item : ${result.items}">
+								<td><span th:text="${item.email}"> </span></td>
+								<td><span th:if="${item != null}"
+									th:utext="${item.fullName}"></span></td>
+								<td><span th:if="${item != null && item.address != null}"
+									th:utext="${item.address.address}"></span></td>
+
+								<td nowrap><span th:if="${item.supervised}"><i
+										class="fas fa-check"></i></span> <span th:unless="${item.supervised}"><i
+										class="fas fa-times"></i></span></td>
+
+								<td class="text-right" th:if="${writePermission}">
+									<a
+										class="btn btn-icon btn-2 btn-primary"
+										th:href="${baseURL + '/edit/' + item.id}"
+										th:title="#{action.edit.title}"> <span
+											class="btn-inner--icon"> <i class="fas fa-edit"></i>
+										</span>
+									</a>
+
+									<button class="btn btn-icon btn-2 btn-danger" type="button"
+										th:title="#{action.delete.title}"
+										th:onclick="confirmDelete([[${item.id}]])">
+										<span class="btn-inner--icon"> <i class="fas fa-times"></i>
+										</span>
+									</button>
+								</td>
+								<td class="text-right" th:if="${!writePermission && readPermission}">
+									<a class="btn btn-icon btn-2 btn-info" th:href="${baseURL + '/view/' + item.id}" th:title="#{action.view.title}">
+										<span class="btn-inner--icon">
+											<i class="fas fa-eye"></i>
+										</span>
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+
+			</div>
+			<!-- End table -->
+
+			<div class="card-footer py-4"
+				th:insert="fragments/data-list-pagination :: pagination"></div>
+
+		</div>
+
+
+		<div class="modal fade" id="confirm-delete-modal" tabindex="-1"
+			role="dialog" aria-labelledby="deleteConfirmModal" aria-hidden="true"
+			data-backdrop="false">
+			<div class="modal-dialog modal-dialog-centered modal-7"
+				role="document">
+				<div class="modal-content">
+					<form id="confirm-delete-form" action="javascript:;" method="POST">
+						<div class="modal-header modal-header-danger">
+							<h3 class="modal-title" id="confirm-delete-modal-title"
+								th:utext="#{modal.confirm.delete.title}"></h3>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p
+								th:utext="#{modal.confirm.delete.message(#{${baseMessageKey} + '.name'})}"></p>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-danger"
+								th:utext="#{modal.button.yes}">Yes</button>
+							<button type="button" class="btn btn-secondary ml-auto"
+								data-dismiss="modal" th:utext="#{modal.button.no}">No</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<th:block th:replace="fragments/data-list-modals :: modals"></th:block>
+	</th:block>
+
+
+	<section layout:fragment="scripts">
+		
+		<script>
+			var select_all = false;
+			function confirmDelete(id) {
+				var url = '[[${baseURL}]]/delete/' + id;
+
+				$('#confirm-delete-form').attr('action', url);
+				showModal('confirm-delete-modal');
+			}
+
+			$(document).ready(function() {
+				
+			showOnLoadedModal();
+
+			if ([[${writePermission}]]) {
+			 	$('#professional-data-table').dataTable({
+					"sDom" : 't',
+					"order": [],
+					 "aoColumns": [
+						 	null,
+						    null,
+						    null,
+						    {  "sType": "string" },
+						    {  "orderable": false },
+					  ]
+				}); 
+			} else {
+				$('#professional-data-table').dataTable({
+					"sDom" : 't',
+					"order": [],
+					"aoColumns": [
+						    null,
+						    null,
+						    null,
+						    null,
+						    { "sType": "string" },
+					  ]
+				}); 
+			}
+
+								
+
+			$('#display-page-option')
+					.on(
+							'changed.bs.select',
+							function(e, clickedIndex,
+									isSelected,
+									previousValue) {
+								const selectedPageSize = $('#display-page-option').val();
+
+								window.location = '[[${baseURL}]]/search?action=update-filter&page=1&size='
+										+ selectedPageSize;
+							});
+		});
+		</script>
+
+	</section>
+
+</body>
+</html>

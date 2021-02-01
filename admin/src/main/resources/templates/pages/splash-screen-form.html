@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="card shadow">
+			<div class="card-header border-0">
+				<div class="row">
+					<div class="col-12">
+						<h3 class="mb-0 form-title-label" th:utext="${formTitle}"></h3>
+					</div>
+				</div>
+			</div>
+			
+			<div class="card-body border-0">
+				<form action="#" th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+					th:id="${pageName + '-data-form'}"
+					th:object="${dto}" method="post" enctype="multipart/form-data">
+					<fieldset th:disabled="${!writePermission}">
+						<div class="form-group row">
+							<label for="text" class="label form-control-label col-lg-2 col-md-3 col-smd-12 col-sm-3 hidden-xs" 
+								th:text="#{|${baseMessageKey}.detail.text|}"></label>
+							<div class="col-lg-10 col-md-9 col-smd-12 col-sm-9 col-xs-12">
+								<textarea class="form-control" rows="10" 
+									th:field="*{text}" id="text"
+									th:placeholder="#{|${baseMessageKey}.detail.text.placeholder|}"
+									autofocus="autofocus"></textarea>
+								<div class="invalid-feedback" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+							</div>
+						</div>
+
+						<div th:if="${writePermission}" class="form-group row">
+							<div class="offset-lg-2 col-lg-10 offset-md-3 col-md-9 offset-smd-0 col-smd-12 offset-sm-3 col-sm-9 col-xs-12">
+								<div class="form-action-buttons-row">
+									<button type="submit" class="btn btn-primary sm-btn-block smd-btn-block btn-above" th:title="#{action.save.title}">
+										<i class="fas fa-save"></i> <span class="hidden-xs" th:text="#{action.save}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			$(function() {
+		    	showOnLoadedModal();
+		    });
+		</script>
+	</th:block>
+</body>
+</html>

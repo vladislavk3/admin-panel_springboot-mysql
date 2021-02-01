@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+	<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="card shadow"> 
+			<div class="card-header border-0">
+				<th:block th:replace="fragments/data-page-options :: list-header"></th:block>
+				
+				<th:block th:replace="fragments/data-page-options :: list-filter-2"></th:block>
+			</div>
+			
+			<div class="table-responsive">
+				<table class="table align-items-center table-flush" th:id="${pageName + '-data-table'}">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col" width="80%" th:text="#{|${baseMessageKey}.detail.name|}"></th>
+							<th scope="col" width="10%" th:text="#{|${baseMessageKey}.detail.session.count|}"></th>
+							<th scope="col" class="no-sort" th:if="${readPermission}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item : ${result.items}">
+							<th scope="row" nowrap>
+								<div class="media align-items-center">
+									<a th:if="${item.image != null && item.image != ''}" 
+										th:href="${baseMediaURL + '/image/view/' + item.image}" 
+										class="avatar rounded-circle mr-3" target="_blank">
+										<img th:alt="${item.name}" th:src="${baseMediaURL + '/image/view/' + item.image}">
+									</a>
+									<a th:if="${item.image == null || item.image == ''}" 
+										href="javascript:;" class="avatar rounded-circle mr-3">
+										<img th:alt="${item.name}" th:src="@{/images/default/{pageName}.png(pageName=${pageName})}">
+									</a>
+									<div class="media-body">
+										<span class="mb-0 text-sm" th:text="${item.name}"></span>
+									</div>
+								</div>
+							</th>
+							<td class="text-center">
+								<span th:text="${item.sessionCount}"></span>
+							</td>
+							<td class="text-right" th:if="${writePermission}">
+								<a class="btn btn-icon btn-2 btn-primary" th:href="${baseURL + '/edit/' + item.id}" th:title="#{action.edit.title}">
+									<span class="btn-inner--icon">
+										<i class="fas fa-edit"></i>
+									</span>
+								</a>
+								
+								<button class="btn btn-icon btn-2 btn-danger" type="button" 
+									th:title="#{action.delete.title}" th:onclick="confirmDelete([[${item.id}]])">
+									<span class="btn-inner--icon">
+										<i class="fas fa-times"></i>
+									</span>
+								</button>
+							</td>
+							<td class="text-right" th:if="${!writePermission && readPermission}">
+								<a class="btn btn-icon btn-2 btn-info" th:href="${baseURL + '/view/' + item.id}" th:title="#{action.view.title}">
+									<span class="btn-inner--icon">
+										<i class="fas fa-eye"></i>
+									</span>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="card-footer py-4" th:insert="fragments/data-list-pagination :: pagination"></div>
+		</div>
+		
+		<th:block th:replace="fragments/data-list-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			const sortableColumnMaps = { 'name': 0, 'sessionCount': 1 };
+			
+			function confirmDelete(id) {
+				const deleteUrl = '[[${baseURL}]]/delete/' + id;
+				
+				$('#confirm-delete-form').attr('action', deleteUrl);
+				showModal('confirm-delete-modal');
+			}
+			
+			$(function() {
+				const dataTableId = '[[${pageName}]]-data-table'; 
+				const defaultSort = '[[${sort}]]';
+				const sortUrl = '[[${baseURL}]]/current-page?sort=';
+				
+				buildDataTable(dataTableId, sortableColumnMaps, defaultSort, sortUrl);
+				
+				$('select').selectpicker();
+				
+				$('#display-page-option').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+					const selectedPageSize = $('#display-page-option').val();
+					
+					window.location = '[[${baseURL}]]/search?action=update-filter&page=1&size=' + selectedPageSize;
+				});
+				
+				showOnLoadedModal();
+			});
+		</script>
+	</th:block>
+</body>
+</html>

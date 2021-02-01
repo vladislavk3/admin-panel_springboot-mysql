@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+</head>
+
+<body>
+	<div th:fragment="side-nav" class="container-fluid">
+		<!-- Toggler -->
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" 
+			aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		  
+		<!-- Brand -->
+		<a th:href="@{/}" class="navbar-brand pt-0">
+			<img th:src="@{/images/brand/logo_horizontal_bleu.png}" class="navbar-brand-img" alt="...">
+		</a>
+		
+		<!-- User -->
+		<ul class="nav align-items-center d-md-none">
+			<!-- 
+			<li class="nav-item dropdown">
+				<a class="nav-link nav-link-icon" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="ni ni-bell-55"></i>
+				</a>
+				
+				<div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right" aria-labelledby="navbar-default_dropdown_1">
+					<a class="dropdown-item" href="#">Action</a>
+					<a class="dropdown-item" href="#">Another action</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">Something else here</a>
+		  		</div>
+			</li>
+			-->
+			
+			<li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+		  		<a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<div class="media align-items-center">
+			  			<span class="avatar avatar-sm rounded-circle">
+			  				<img th:if="${userAvatar == null || userAvatar == ''}" alt="Avatar" th:src="@{/images/default/Profile_avatar_placeholder_large.png}">
+			  				<img th:if="${userAvatar != null && userAvatar != ''}" alt="Avatar" th:src="@{|${baseAvatarURL}/image/view/${userAvatar}|}">
+			  			</span>
+					</div>
+		  		</a>
+		  		<div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+					<div class=" dropdown-header noti-title">
+			  			<h6 class="text-overflow m-0" th:text="${displayName}">Welcome!</h6>
+					</div>
+					<a th:href="@{/account/settings}" class="dropdown-item">
+						<i class="fas fa-calendar-alt"></i>
+						<span th:text="#{menu.account.settings}">Account setting</span>
+		  			</a>
+	  			
+		  			<div class="dropdown-divider"></div>
+		  			<a th:href="@{/oauth/logout}" class="dropdown-item">
+						<i class="fas fa-sign-out-alt"></i>
+						<span th:text="#{menu.logout}">Logout</span>
+		  			</a>
+		  			<!-- 
+					<a th:href="@{/oauth/profile}" class="dropdown-item">
+						<i class="fas fa-user-circle"></i>
+						<span th:text="#{menu.profile}">My profile</span>
+					</a>
+					<a href="../examples/profile.html" class="dropdown-item">
+			  			<i class="fas fa-users-cog"></i>
+						<span th:text="#{menu.settings}">Settings</span>
+					</a>
+					<a href="../examples/profile.html" class="dropdown-item">
+			  			<i class="fas fa-calendar-alt"></i>
+						<span th:text="#{menu.activity}">Activity</span>
+					</a>
+					<a href="../examples/profile.html" class="dropdown-item">
+			  			<i class="fas fa-question-circle"></i>
+						<span th:text="#{menu.support}">Support</span>
+					</a>
+					
+					<div class="dropdown-divider"></div>
+					<a th:href="@{/oauth/logout}" class="dropdown-item">
+			  			<i class="fas fa-sign-out-alt"></i>
+						<span th:text="#{menu.logout}">Logout</span>
+					</a>
+					-->
+		  		</div>
+			</li>
+	  	</ul>
+		
+	  	<!-- Collapse -->
+	  	<div class="collapse navbar-collapse" id="sidenav-collapse-main">
+			<!-- Collapse header -->
+			<div class="navbar-collapse-header d-md-none">
+		  		<div class="row">
+					<div class="col-6 collapse-brand">
+			  			<a th:href="@{/}">
+							<img th:src="@{/images/brand/logo_horizontal_bleu.png}">
+			  			</a>
+					</div>
+					<div class="col-6 collapse-close">
+			  			<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#sidenav-collapse-main" 
+			  				aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle sidenav">
+							<span></span>
+							<span></span>
+			  			</button>
+					</div>
+		  		</div>
+			</div>
+			<!-- Search form -->
+			<!-- 
+			<form th:if="${baseURL != null && baseURL != ''}" 
+				role="form" th:action="${baseURL} + '/search'" method="get" class="mt-4 mb-3 d-md-none">
+		  		<div class="input-group input-group-rounded input-group-merge">
+					<input type="search" name="q" class="form-control form-control-rounded form-control-prepended" 
+						aria-label="Search" th:placeholder="#{search.placeholder}" th:value="${search}">
+					<div class="input-group-prepend">
+			  			<div class="input-group-text">
+							<span class="fa fa-search"></span>
+			  			</div>
+					</div>
+		  		</div>
+			</form>
+			-->
+			
+			<!-- Navigation -->
+			<ul class="navbar-nav">
+				<!-- 
+		  		<li th:class="${'nav-item' + (currentFunction == '' || currentFunction == '/' ? ' active' : '')}">
+					<a class="nav-link" th:href="@{/}">
+			  			<i class="fas fa-home"></i> <span th:text="#{menu.home}">Home</span>
+					</a>
+		  		</li>
+		  		-->
+		  		
+		  		<th:block sec:authorize="hasAnyRole('ROLE_ADM')">
+		  			<th:block th:if="${permission != null}">
+		  				<!-- 
+			  			<h6 th:if="${permission.hasPermission('/session-category', '/session')}" 
+			  				class="navbar-heading text-muted"
+			  				th:utext="#{menu.group.session}"></h6>
+			  			-->
+			  			<li th:if="${permission.hasPermission('/session-category')}"
+			  				th:class="${'nav-item' + (currentFunction == '/session-category' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/session-category}">
+					  			<i class="fas fa-list"></i> <span th:text="#{menu.session.category}"></span>
+							</a>
+				  		</li>
+				  		
+				  		<li th:if="${permission.hasPermission('/session')}"
+				  			th:class="${'nav-item' + (currentFunction == '/session' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/session}">
+					  			<i class="fas fa-compact-disc"></i> <span th:text="#{menu.session}"></span>
+							</a>
+				  		</li>
+				  		
+				  		<li th:if="${permission.hasPermission('/users')}"
+				  			th:class="${'nav-item' + (currentFunction == '/users' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/users}">
+					  			<i class="fas fa-user"></i> <span th:text="#{menu.user.management}"></span>
+							</a>
+				  		</li>
+			  		
+				  		<li th:if="${permission.hasPermission('/professional')}" 
+				  			th:class="${'nav-item' + (currentFunction == '/professional' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/professional}">
+					  			<i class="fas fa-user-graduate"></i> <span th:text="#{menu.professional}"></span>
+							</a>
+						</li>
+	
+			  			<li th:if="${permission.hasPermission('/subtype')}"
+			  				th:class="${'nav-item' + (currentFunction == '/subtype' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/subtype}">
+					  			<i class="fas fa-book"></i> <span th:text="#{menu.subscriptions.type}"></span>
+							</a>
+						</li>
+						
+						<li th:if="${permission.hasPermission('/subscription')}"
+							th:class="${'nav-item' + (currentFunction == '/subscription' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/subscription}">
+					  			<i class="fas fa-handshake"></i> <span th:text="#{menu.subscriptions}"></span>
+							</a>
+						</li>
+							
+				  		<li th:if="${permission.hasPermission('/discount-code', '/discount-code-0', '/discount-code-1', '/discount-code-2', '/discount-code-3')}"
+				  			th:class="${'nav-item' + (currentFunction == '/discount-code' || currentFunction == '/discount-code-0' || currentFunction == '/discount-code-1' || currentFunction == '/discount-code-2' || currentFunction == '/discount-code-3' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/discount-code}">
+					  			<i class="fas fa-percent"></i> <span th:text="#{menu.discount.code}"></span>
+							</a>
+				  		</li>
+				  		
+				  		<li th:if="${permission.hasPermission('/gift')}"
+				  			th:class="${'nav-item' + (currentFunction == '/gift' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/gift}">
+					  			<i class="fas fa-gift"></i> <span th:text="#{menu.gift}"></span>
+							</a>
+				  		</li>
+				  		
+				  		<li th:if="${permission.hasPermission('/slideshow')}"
+				  			th:class="${'nav-item' + (currentFunction == '/slideshow' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/slideshow}">
+					  			<i class="fas fa-images"></i> <span th:text="#{menu.slideshow}"></span>
+							</a>
+				  		</li>
+				  		
+				  		<li th:if="${permission.hasPermission('/splash-screen')}"
+				  			th:class="${'nav-item' + (currentFunction == '/splash-screen' ? ' active' : '')}">
+							<a class="nav-link" th:href="@{/splash-screen}">
+					  			<i class="fas fa-eye"></i> <span th:text="#{menu.splash.screen}"></span>
+							</a>
+				  		</li>
+				  	</th:block>
+			  	</th:block>
+			  	
+			  	<!--
+			  	<th:block sec:authorize="isAuthenticated()">
+			  		<li class="nav-item">
+						<a class="nav-link" th:href="@{/users/settings}">
+				  			<i class="fas fa-user-circle text-yellow"></i> <span th:text="#{menu.profile}">My Profile</span>
+						</a>
+			  		</li>
+			  	</th:block>
+			  	-->
+			  	
+		  		<th:block sec:authorize="!isAuthenticated()">
+			  		<li class="nav-item">
+						<a class="nav-link" th:href="@{/oauth/login}">
+				  			<i class="fas fa-sign-in-alt text-info"></i> <span th:text="#{menu.login}">Login</span>
+						</a>
+			  		</li>
+			  		<li th:if="${allowRegister}" class="nav-item">
+						<a class="nav-link" th:href="@{/oauth/register}">
+				  			<i class="fas fa-user-plus text-pink"></i> <span th:text="#{menu.register}">Register</span>
+						</a>
+			  		</li>
+			  	</th:block>
+			</ul>
+			
+			<!-- 
+			<hr class="my-3">
+		
+			<h6 class="navbar-heading text-muted">Documentation</h6>
+			
+			<ul class="navbar-nav mb-md-3">
+		  		<li class="nav-item">
+					<a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/getting-started/overview.html">
+			  			<i class="ni ni-spaceship"></i> Getting started
+					</a>
+		  		</li>
+		  		<li class="nav-item">
+					<a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/foundation/colors.html">
+			  			<i class="ni ni-palette"></i> Foundation
+					</a>
+		  		</li>
+		  		<li class="nav-item">
+					<a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/components/alerts.html">
+			  			<i class="ni ni-ui-04"></i> Components
+					</a>
+		  		</li>
+			</ul>
+			
+			<ul class="navbar-nav">
+		  		<li class="nav-item active active-pro">
+					<a class="nav-link" href="../examples/upgrade.html">
+			  			<i class="ni ni-send text-dark"></i> Upgrade to PRO
+					</a>
+		  		</li>
+			</ul>
+			-->
+	  	</div>
+	</div>
+</body>
+</html>

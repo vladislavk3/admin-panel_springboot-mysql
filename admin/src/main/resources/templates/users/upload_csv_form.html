@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title th:text="#{action.upload.file}">Upload file</title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<h3 th:text="#{csv.action.select.user.file}">Select CSV users file</h3>
+
+		<form method="POST" th:action="${baseURL + '/importcsv'}"
+			enctype="multipart/form-data">
+			<div class="form-group row">
+				<div class="col-md-5 col-sm-8">
+					<div class="custom-file">
+						<input type="file" name="file" id="file" class="custom-file-input"
+							onchange="selectFile(this);" /> <label class="custom-file-label"
+							for="file" id="csvFileLabel"></label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<input class="form-control col-md-2 col-sm-4 col-xs-5 ml-3"
+					type="submit" th:value="#{action.submit}" />
+			</div>
+		</form>
+			
+		<BR>
+		<i><span th:text="#{csv.note.columns.name}">Note: Make sure that the column names are correct.</span></i>
+
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+
+	</th:block>
+	<th:block layout:fragment="scripts">
+		<script type="text/javascript">
+			function selectFile(inputElement) {
+				var fileName = inputElement.files[0].name;
+				$("#csvFileLabel").text(fileName);
+			} 
+			$(document).ready(function() {
+				showOnLoadedModal();
+			});
+		</script>
+	</th:block>
+</body>
+</html>

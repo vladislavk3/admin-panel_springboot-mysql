@@ -1,0 +1,609 @@
+/********* Overrides *************/
+b, strong {
+    font-weight: bold;
+}
+
+.main-content .navbar {
+	padding-top: 10px;
+}
+
+.required-field::after {
+	content: "*";
+	color: #f00;
+	padding-left: 6px;
+}
+
+.invalid-feedback {
+	display: initial;
+}
+
+.image-fit {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+	object-fit: cover;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.main-header-container {
+	min-height: 50px;
+}
+
+.form-title-label {
+	/*padding-top: 10px;*/
+}
+
+.form-search-container {
+	color: #495057;
+    border-top: 1px solid #dee2e6;
+    margin-top: 12px;
+    padding-top: 10px;
+}
+
+.bootstrap-select .bs-searchbox .form-control {
+	border: 1px solid #ced4da;
+}
+
+label.disabled {
+	color: #a0a0a0;
+	cursor: not-allowed;
+}
+
+select.selectpicker[disabled] + button {
+	background-color: #e9ecef;
+	border: 1px solid #ced4da;
+	box-shadow: none;
+	color: #a0a0a0;
+    opacity: 1;
+}
+
+.hidden {
+	visibility: hidden;
+	display: none;	
+}
+
+.form-control[disabled] {
+	color: #a0a0a0;
+}
+
+.form-control[disabled] + .input-group-prepend .input-group-text {
+	color: #a0a0a0;
+}
+
+.custom-file label {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.custom-control.custom-checkbox.label-left {
+	padding-left: 0;
+}
+
+.custom-control.custom-checkbox.label-left label.custom-control-label {
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.custom-control.custom-checkbox.label-left label.custom-control-label::before, 
+.custom-control.custom-checkbox.label-left label.custom-control-label::after{
+  right: 0;
+  left: auto;
+}
+
+.custom-checkbox .custom-control-input~.custom-control-label:before {
+    /*border: 1px solid #5e72e4;*/
+    border: 1px solid #cad1d7;
+    border-radius: .375rem;
+    box-shadow: none;
+}
+
+.page-header {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@media (max-width: 575px) {
+	.sm-btn-block {
+		display: block;
+    	width: 100%;
+    	
+    	white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.sm-btn-block.btn-above {
+		margin-bottom: 1rem;
+	}
+}
+
+@media (min-width: 576px) {
+	.sm-text-right {
+		text-align: right;
+	}
+}
+
+@media (max-width: 576px) {
+	.xs-form-group {
+    	margin-bottom: 1rem;
+	}
+	
+	.xs-filter-group {
+    	margin-bottom: 0.5rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.sm-form-group {
+    	margin-bottom: 1rem;
+	}
+	
+	.pb-7, .py-7 {
+    	/*padding-bottom: 1rem !important;*/
+    	padding-bottom: 4rem !important;
+	}
+	
+	/*
+	.main-content .navbar {
+		visibility: hidden;
+		display: none;
+	}
+	*/
+	
+	.main-content .navbar {
+    	padding-top: 16px;
+	}
+	
+	.page-header {
+		padding-left: 16px;
+    	padding-right: 16px;
+	}
+}
+
+@media (min-width: 769px) {
+	.md-text-right {
+		text-align: right;
+	}
+	
+	.sm-form-group {
+    	margin-bottom: 0rem;
+	}
+}
+
+@media (max-width: 1024px) {
+	.custom-file-input~.custom-file-label[data-browse]::after {
+		/*white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100px;*/
+		content: attr(data-browse-short-label)
+	}	
+}
+
+@media (min-width: 769px) and (max-width: 1150px) {
+	.col-smd-3 {
+		width: 25%;
+		flex: 0 0 25%;
+		max-width: 25%;
+	}
+	
+	.col-smd-6 {
+		width: 50%;
+		flex: 0 0 50%;
+		max-width: 50%;
+	}
+	
+	.col-smd-9 {
+		width: 75%;
+		flex: 0 0 75%;
+		max-width: 75%;
+	}
+	
+	.col-smd-12 {
+		width: 100%;
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	
+	.offset-smd-0 {
+    	margin-left: 0px;
+	}
+	
+	.hidden-smd {
+		visibility: hidden;
+		display: none;
+	}
+	
+	.smd-text-left {
+		text-align: left;
+	}
+	
+	.smd-new-form-group-row {
+		margin-bottom: 1rem;
+	}
+	
+	.smd-btn-block {
+		display: block;
+    	width: 100%;
+    	
+    	white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.smd-btn-block.btn-above {
+		margin-bottom: 1rem;
+	}
+}
+
+/********* Modal *************/
+.modal-header.modal-header-warning {
+	background-color: #fb6340; 
+	color: #fff;
+}
+
+.modal-header.modal-header-warning button,
+.modal-header.modal-header-warning .modal-title {
+	color: #fff;
+}
+
+.modal-header.modal-header-danger {
+	background-color: #f5365c; 
+	color: #fff;
+}
+
+.modal-header.modal-header-danger button,
+.modal-header.modal-header-danger .modal-title {
+	color: #fff;
+}
+
+.modal-header.modal-header-primary {
+	background-color: #5e72e4; 
+	color: #fff;
+}
+
+.modal-header.modal-header-primary button,
+.modal-header.modal-header-primary .modal-title {
+	color: #fff;
+}
+/********* Toast *************/
+.toast-primary .toast-header {
+	background-color: #5e72e4; 
+	color: #fff;
+}
+
+.modal-dialog .modal-header-primary svg rect,
+.modal-primary .modal-header svg rect,
+.toast-primary .toast-header svg rect {
+	fill: #2038c1;	/* 30% darker */
+}
+
+.toast-secondary .toast-header {
+	background-color: #f7fafc; 
+	color: #212529;
+}
+.modal-dialog .modal-header-secondary svg rect,
+.modal-secondary .modal-header svg rect,
+.toast-secondary .toast-header svg rect {
+	fill: #8ab5d3;	/* 30% darker */
+}
+
+.toast-success .toast-header {
+	background-color: #2dce89; 
+	color: #fff;
+}
+
+.modal-dialog .modal-header-success svg rect,
+.modal-success .modal-header svg rect,
+.toast-success .toast-header svg rect {
+	fill: #1f905f;	/* 30% darker */
+}
+
+.toast-info .toast-header {
+	background-color: #11cdef; 
+	color: #fff;
+}
+
+.modal-dialog .modal-header-info svg rect,
+.modal-info .modal-header svg rect,
+.toast-info .toast-header svg rect {
+	fill: #0b8fa7;	/* 30% darker */
+}
+
+.toast-warning .toast-header {
+	background-color: #fb6340; 
+	color: #fff;
+}
+
+.modal-dialog .modal-header-warning svg rect,
+.modal-warning .modal-header svg rect,
+.toast-warning .toast-header svg rect {
+	fill: #d72c04;	/**30% darker */
+}
+
+.toast-danger .toast-header {
+	background-color: #f5365c; 
+	color: #fff;
+}
+
+.modal-dialog .modal-header-danger svg rect,
+.modal-danger .modal-header svg rect,
+.toast-danger .toast-header svg rect {
+	fill: #c7092f;	/**30% darker */
+}
+
+/********* Table *************/
+table.dataTable {
+	margin-top: 0px !important;	
+}
+
+table.dataTable thead .sorting:before, 
+table.dataTable thead .sorting_asc:before, 
+table.dataTable thead .sorting_desc:before, 
+table.dataTable thead .sorting_asc_disabled:before, 
+table.dataTable thead .sorting_desc_disabled:before {
+	padding-bottom: 0.25rem;
+	font-family:"Font Awesome 5 Free";
+	font-size: 14px;
+}
+
+table.dataTable thead .sorting:after, 
+table.dataTable thead .sorting_asc:after, 
+table.dataTable thead .sorting_desc:after, 
+table.dataTable thead .sorting_asc_disabled:after, 
+table.dataTable thead .sorting_desc_disabled:after {
+    padding-bottom: .25rem;
+    font-family:"Font Awesome 5 Free";
+    font-size: 14px;
+}
+
+table.dataTable td.action-column {
+	text-align: right !important;
+}
+
+table.dataTable td.action-column .btn {
+	padding: .5rem .8rem;	
+}
+
+table.dataTable thead .sorting:before {
+	content-xx: "\f161";
+	content: "\f0de";
+	right: 1em;
+	top: 0.6em;
+}
+
+table.dataTable thead .sorting:after {
+	content-xx: "" !important;
+	content: "\f0dd";
+	right: 1em;
+	top: 0.6em;
+}
+
+table.dataTable thead .sorting_asc:before, 
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after {
+	color: #5e72e4;	
+}
+
+table.dataTable thead .sorting_asc:before, 
+table.dataTable thead .sorting_asc_disabled:before {
+	content-xx: "\f161";
+	content: "\f0de";
+	right: 1em;
+	top: 0.6em;
+}
+
+table.dataTable thead .sorting_asc:after, 
+table.dataTable thead .sorting_asc_disabled:after {
+	content-xx: "" !important;
+	content: "\f0dd";
+	right: 1em;
+	top: 0.6em;
+}
+
+table.dataTable thead .sorting_desc:before, 
+table.dataTable thead .sorting_desc_disabled:before {
+	content: "\f0de";
+	right: 1em;
+	top: 0.6em;
+}
+
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc_disabled:after {
+	content-xx: "\f160";
+	content: "\f0dd";
+	right: 1em;
+	top: 0.6em;
+}
+
+/*
+    code by Iatek LLC 2018 - CC 2.0 License - Attribution required
+    code customized by Azmind.com
+*/
+@media (min-width: 769px) and (max-width: 991px) {
+    /* Show 4th slide on md if col-md-4*/
+    .carousel-inner .active.col-md-4.carousel-item + .carousel-item + .carousel-item + .carousel-item {
+        position: absolute;
+        top: 0;
+        right: -33.3333%;  /*change this with javascript in the future*/
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+}
+@media (min-width: 576px) and (max-width: 769px) {
+    /* Show 3rd slide on sm if col-sm-6*/
+    .carousel-inner .active.col-sm-6.carousel-item + .carousel-item + .carousel-item {
+        position: absolute;
+        top: 0;
+        right: -50%;  /*change this with javascript in the future*/
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+}
+@media (min-width: 576px) {
+    .carousel-item {
+        margin-right: 0;
+    }
+    /* show 2 items */
+    .carousel-inner .active + .carousel-item {
+        display: block;
+    }
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item {
+        transition: none;
+    }
+    .carousel-inner .carousel-item-next {
+        position: relative;
+        transform: translate3d(0, 0, 0);
+    }
+    /* left or forward direction */
+    .active.carousel-item-left + .carousel-item-next.carousel-item-left,
+    .carousel-item-next.carousel-item-left + .carousel-item,
+    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+    /* farthest right hidden item must be also positioned for animations */
+    .carousel-inner .carousel-item-prev.carousel-item-right {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+    /* right or prev direction */
+    .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
+    .carousel-item-prev.carousel-item-right + .carousel-item,
+    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+        display: block;
+        visibility: visible;
+    }
+}
+/* MD */
+@media (min-width: 769px) {
+    /* show 3rd of 3 item slide */
+    .carousel-inner .active + .carousel-item + .carousel-item {
+        display: block;
+    }
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item {
+        transition: none;
+    }
+    .carousel-inner .carousel-item-next {
+        position: relative;
+        transform: translate3d(0, 0, 0);
+    }
+    /* left or forward direction */
+    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+    /* right or prev direction */
+    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+        display: block;
+        visibility: visible;
+    }
+}
+/* LG */
+@media (min-width: 991px) {
+    /* show 4th item */
+    .carousel-inner .active + .carousel-item + .carousel-item + .carousel-item {
+        display: block;
+    }
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item + .carousel-item {
+        transition: none;
+    }
+    /* Show 5th slide on lg if col-lg-3 */
+    .carousel-inner .active.col-lg-3.carousel-item + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
+        position: absolute;
+        top: 0;
+        right: -25%;  /*change this with javascript in the future*/
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+    /* left or forward direction */
+    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+    /* right or prev direction //t - previous slide direction last item animation fix */
+    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+        display: block;
+        visibility: visible;
+    }
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 599px) {
+	.custom-xs-mg-top{
+		margin-top:20px;
+		/* margin-bottom:15px; */
+	}
+	.custom-xs-mg-top-5{
+		margin-top:5px;
+		/* margin-bottom:15px; */
+	}
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen  and (min-width: 600px) and (max-width: 768px) {
+	.custom-sm-mg-top{
+			margin-top:20px;
+			/* margin-bottom:15px; */
+		}
+	.custom-sm-mg-top-5{
+		margin-top:5px;
+	}
+}
+
+/* Medium devices (landscape tablets, 769px and up) */
+@media only screen and (min-width: 769px)  and (max-width: 991px) {
+	.custom-md-mg-top{
+		margin-top:20px;
+	}
+	.custom-md-mg-top-5{
+		margin-top:5px;
+	}
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px)  and (max-width: 1199px) {
+	.custom-lg-mg-top{
+		margin-top:20px;
+	}
+	.custom-lg-mg-top-5{
+		margin-top:5px;
+	}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+	.cutom-xl-mg-right{
+		position: relative;
+		left: 90px;
+	}
+	.cutom-xl-mg-left{
+		position: relative;
+		left: -20px;
+	}
+}

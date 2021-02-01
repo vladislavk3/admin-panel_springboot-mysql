@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/main-layout.html}">
+<head>
+<title th:text="#{|${baseMessageKey}.page.title|}"></title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<!-- Form -->
+		<div class="row">
+			<div class="col">
+				<div class="card shadow">
+					<!-- Card Header -->
+					<div class="card-header border-0">
+						<th:block th:replace="fragments/data-page-options :: form-header"></th:block>
+					
+						<!-- <div class="row">
+							<div class="col-6">
+								<a class="btn btn-icon btn-2 btn-primary"
+									th:href="${baseURL + '/current-page'}"
+									th:title="#{action.go.to.list.title}"> <span
+									class="btn-inner--icon"> <i class="fas fa-arrow-left"></i>
+										<span th:text="#{action.go.to.list}"></span>
+								</span>
+								</a>
+							</div>
+
+							<div class="col-6 text-right">
+								<h3 class="mb-0" th:text="${formTitle}"></h3>
+							</div>
+						</div> -->
+					</div>
+					<!-- Card Body -->
+					<div class="card-body border-0">
+						<form
+							th:action="${writePermission ? baseURL + '/' + action : 'javascript:;'}"
+							th:object="${dto}" method="post">
+							<fieldset th:disabled="${!writePermission}">
+								<div class="row">
+									<div class="col">
+										<!-- Name -->
+										<div class="form-group row">
+											<label for="name"
+												class="label form-control-label col-lg-4   required-field"
+												th:text="#{|${baseMessageKey}.detail.name|}"></label>
+											<div class="col-lg-8 col-xs-12">
+												<input type="text" class="form-control" id="name"
+													th:field="*{name}"
+													 required/>
+												<div class="invalid-feedback"></div>
+											</div>
+										</div>
+										<!-- Description -->
+										<div class="form-group row">
+											<label for="description"
+												class="label form-control-label col-lg-4   required-field"
+												th:text="#{|${baseMessageKey}.detail.description|}"></label>
+											<div class="col-lg-8 col-xs-12">
+												<textarea class="form-control" rows="3" id="description"
+													th:field="*{description}"
+													required> </textarea>
+												<div class="invalid-feedback"></div>
+											</div>
+										</div>										
+										<!-- Price -->
+										<div class="form-group row">
+											<label for="price"
+												class="label form-control-label col-lg-4   required-field"
+												th:text="#{|${baseMessageKey}.detail.price|}"></label>
+											<div class="col-lg-8 col-xs-12">
+												<input type="number" step="0.01" class="form-control"
+													id="price" th:field="*{price}"
+													 required />
+												<div class="invalid-feedback"></div>
+											</div>
+										</div>
+										<!-- Canal -->										
+										<div class="form-group row">
+											<label for="canal"
+												class="label form-control-label col-lg-4   required-field"
+												th:text="#{|${baseMessageKey}.detail.canal|}"></label>
+											<div class="col-lg-8 col-xs-12">
+												<select class="form-control" id="canal" th:field="*{canal}"
+													>
+													<option th:each="canal : ${canals}" th:value="${canal}"
+														th:text="${canal}"></option>
+												</select>
+											</div>
+										</div>										
+										<!-- Duration -->
+										<div class="form-group row">
+											<label for="duration"
+												class="label form-control-label col-lg-4   required-field"
+												th:text="#{|${baseMessageKey}.detail.duration|}"></label>
+											<div class="col-lg-8 col-xs-12">
+												<select class="form-control" id="duration"
+													th:field="*{duration}"
+													>
+													<option th:each="duration : ${durations}"
+														th:value="${duration}"
+														th:text="${duration} + ' ' + #{|${baseMessageKey}.detail.duration.unit|}">
+													</option>
+												</select>
+											</div>
+										</div>
+										<!-- Automatic renewal -->
+										<div class="form-group row">
+											<label for="autorenew"
+												class="label form-control-label col-lg-4  col-md-6 col-sm-7 col-8 required-field"
+												th:text="#{|${baseMessageKey}.detail.autorenew|}"></label>
+											<div class="col-lg-8 col-md-2 col-sm-5 col-4">
+												<input id="autorenew" th:field="*{autoRenew}"
+													type="checkbox">
+											</div>
+										</div>
+										<!-- Status -->
+										<div class="form-group row">
+											<label for="status"
+												class="label form-control-label col-lg-4  col-md-6 col-sm-7 col-8 required-field"
+												th:text="#{|${baseMessageKey}.detail.status|}"></label>
+											<div class="col-lg-8 col-md-2 col-sm-5 col-4">
+												<input id="status" th:field="*{status}" type="checkbox">
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+							<th:block th:replace="fragments/data-page-options :: form-action-no-offset"></th:block>
+
+							<!-- <div class="form-group row ml-1">
+								<div class="form-action-buttons-row">
+									<button type="submit" class="btn btn-primary"
+										th:title="#{action.save.title}">
+										<i class="fas fa-save"></i> <span class="hidden-xs"
+											th:text="#{action.save}"></span>
+									</button>
+
+									<a class="btn btn-outline-warning"
+										th:href="${baseURL + '/current-page'}"
+										th:title="#{action.go.to.list.title}"> <span
+										class="btn-inner--icon"> <i class="fas fa-arrow-left"></i>
+											<span th:text="#{action.go.to.list}"></span>
+									</span>
+									</a>
+								</div>
+							</div> -->
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<th:block th:replace="fragments/data-form-modals :: modals"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="scripts">
+	<script type="text/javascript">			
+			$(function() {
+		    	showOnLoadedModal();
+		    });
+		</script>
+	</th:block>
+</body>
+</html>
